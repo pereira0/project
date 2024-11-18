@@ -4,8 +4,6 @@ import { formatDate } from './reusable.js'
 export function secondStep(babyBirthDate, momLeave, dadLeave) {
     const appDiv = document.getElementById('app');
 
-    const formattedDate = formatDate(new Date(babyBirthDate));
-
     // Replace the landing page content with the form content
     appDiv.innerHTML = `
         <h1>Parte 2 de 3 - Segunda parte da licença inicial</h1>
@@ -83,7 +81,7 @@ function generateCalendar(babyBirthDate, momsLeave, dadsLeave) {
                 const leaveEnd = new Date(range[1]);
                 return currentDay >= leaveStart && currentDay <= leaveEnd;
             });
-
+ 
             // Check if it'sbirthdate
             const isBirthDate = currentDate == babyBirthDate
 
@@ -107,13 +105,16 @@ function generateCalendar(babyBirthDate, momsLeave, dadsLeave) {
             daysGrid.appendChild(dayDiv);
         }
 
-
         monthDiv.appendChild(daysGrid);
         calendarDiv.appendChild(monthDiv);
 
         // Move to the next month
         currentDate.setMonth(currentDate.getMonth() + 1);
+
     }
+
+    // add legend
+    addLegend(calendarDiv);
 }
 
 // Function to find the biggest (latest) date from both momLeave and dadLeave
@@ -139,4 +140,47 @@ function findLatestDate(momsLeave, dadsLeave) {
 
     // Return the latest date found
     return latestDate;
+}
+
+// Function to add the legend under the calendar
+function addLegend(calendarDiv) {
+    const legendDiv = document.createElement('div');
+    legendDiv.classList.add('legend');
+
+    const legendItems = [
+        { color: '#fb7e3c', label: "Licença conjunta" },
+        { color: '#f3d13c', label: "Licença da mãe" },
+        { color: '#02a890', label: "Licença do pai" }
+        
+    ];
+
+    legendItems.forEach(item => {
+        const legendItem = document.createElement('div');
+        legendItem.classList.add('legend-item');
+
+        const colorBox = document.createElement('div');
+        colorBox.style.backgroundColor = item.color;
+        colorBox.classList.add('color-box');
+        colorBox.style.width = "20px";
+        colorBox.style.height = "20px";
+        colorBox.style.display = "inline-block";
+        colorBox.style.marginRight = "8px";
+
+        const label = document.createElement('span');
+        label.textContent = item.label;
+
+        legendItem.appendChild(colorBox);
+        legendItem.appendChild(label);
+        legendItem.style.display = "flex";
+        legendItem.style.alignItems = "center";
+        legendItem.style.marginBottom = "8px";
+
+        legendDiv.appendChild(legendItem);
+    });
+
+    legendDiv.style.marginTop = "20px";
+    legendDiv.style.display = "flex";
+    legendDiv.style.flexDirection = "row";
+    legendDiv.style.gap = "10px";
+    calendarDiv.appendChild(legendDiv);
 }

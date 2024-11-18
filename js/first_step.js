@@ -27,7 +27,7 @@ export function setupForm(babyBirthDate) {
         </div>
         <div/>
         <button id="generate-calendar">Próximo passo</button>
-        <div id="calendar"></div>
+        <button id="quick-fill-second">Quick fill</button>
     `;
 
     const formContainer = document.getElementById('form-container');
@@ -60,6 +60,12 @@ export function setupForm(babyBirthDate) {
         
         // passar para o proximo passo com a informação das licenças escolhidas e da data de nascimento
         secondStep(babyBirthDate, momLeave, dadLeave);
+    });
+
+    document.getElementById('quick-fill-second').addEventListener('click', () => {
+        document.getElementById('week-2').checked = true;
+        document.getElementById('week-3').checked = true;
+        document.getElementById('week-4').checked = true;
     });
 }
 

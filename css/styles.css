@@ -19,6 +19,7 @@ body {
     height: 100vh;
 }
 
+
 #app {
     width: 100%;
     max-width: 800px;
@@ -124,20 +125,20 @@ input[type="date"] {
 
 /* Highlight the days in the mom's leave */
 .days-grid .mom-leave {
-    background-color: #FFCCCB;
-    color: #d84e4e;
+    background-color: #f3d13c;
+    color: #1d1909;
 }
 
 /* Highlight the days in the dad's leave */
 .days-grid .dad-leave {
-    background-color: #C4E1F3;
-    color: #5a98d1;
+    background-color: #02a890;
+    color: #ccfff7;
 }
 
 /* Highlight the days in the joints's leave */
 .days-grid .joint-leave {
-    background-color: #5a98d1;
-    color: #353535;
+    background-color: #fb7e3c;
+    color: #fff9f6;
 }
 
 /* Highlight the birthdate */
@@ -151,5 +152,4 @@ input[type="date"] {
     background-color: #f0f0f0;
     cursor: pointer;
 } 
-
 

@@ -12,6 +12,7 @@ function renderLandingPage() {
         <p>Quando nasceu o bebé ou qual a data prevista de nascimento?</p>
         <input type="date" id="baby-birth-date" />
         <button id="start-simulation">Começar simulação</button>
+        <button id="quick-fill-first">Quick fill</button>
         
     `;
 
@@ -24,6 +25,13 @@ function renderLandingPage() {
             return;
         }
 
+        setupForm(dateInput);
+    });
+
+    // Add event listener for quick fill
+    document.getElementById('quick-fill-first').addEventListener('click', () => {
+        document.getElementById('baby-birth-date').value = '2024-11-18';
+        const dateInput = document.getElementById('baby-birth-date').value;
         setupForm(dateInput);
     });
 }
