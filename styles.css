@@ -1,0 +1,66 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 2rem;
+}
+
+/* Basic layout styles */
+#calendar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;  /* Distribute the months evenly */
+    gap: 10px;  /* Add space between months */
+    margin: 0;
+}
+
+.month {
+    width: 180px; /* Adjusted width to fit the content */
+    height: auto;  /* Ensure the height adjusts based on content */
+    margin: 5px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.9em;  /* Smaller font size */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.month h3 {
+    text-align: center;
+    font-size: 1.1em;  /* Smaller month name font size */
+    margin-top: 0px;  /* Reduced margin between the month header and the days */
+    margin-bottom: 8px;
+}
+
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 columns for each day of the week */
+    gap: 2px;  /* Reduced gap between day cells */
+    width: 100%;  /* Ensure the grid takes the full width of the month div */
+}
+
+.days-grid div {
+    text-align: center;
+    padding: 3px;  /* Reduced padding around each day */
+    background-color: #f1f1f1;
+    border-radius: 4px;
+    font-size: 0.8em;  /* Smaller font size for the day numbers */
+    cursor: pointer;
+    box-sizing: border-box;  /* Ensure the padding does not affect the width */
+}
+
+.days-grid div.mom-leave {
+    background-color: lightcoral;
+    color: white;
+}
+
+.days-grid div.dad-leave {
+    background-color: lightblue;
+    color: white;
+}
+
+.days-grid div.empty-day {
+    background-color: white;
+    color: white;
+}
