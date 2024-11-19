@@ -325,6 +325,7 @@ function createLeavePeriodSelection(babyBirthDate, momLeave=[], dadLeave=[], dur
         const optionsArr = [15,30,60,90,120]
         const durationSelect = document.createElement('select');
         durationSelect.innerHTML = ``
+        
 
         for (let i = 0; i < optionsArr.length; i++) {
             if (daysDifference >= optionsArr[i]) {
