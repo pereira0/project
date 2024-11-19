@@ -19,12 +19,10 @@ function renderLandingPage() {
     // Add event listener for starting the simulation
     document.getElementById('start-simulation').addEventListener('click', () => {
         const dateInput = document.getElementById('baby-birth-date').value;
-
         if (!dateInput) {
             alert('Seleciona uma data!');
             return;
         }
-
         setupForm(dateInput);
     });
 
@@ -32,7 +30,6 @@ function renderLandingPage() {
     document.getElementById('quick-fill-first').addEventListener('click', () => {
         document.getElementById('baby-birth-date').value = '2024-11-18';
         const dateInput = document.getElementById('baby-birth-date').value;
-        setupForm(dateInput);
     });
 }
 

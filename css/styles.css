@@ -69,7 +69,7 @@ input[type="date"] {
 
 
 
-/* BCALENDAR STYLING */
+/* CALENDAR STYLING */
 #calendar {
     display: flex;
     flex-wrap: wrap;
@@ -210,4 +210,51 @@ input[type="date"] {
 
 .second-step-option button:hover {
     background-color: #0056b3;
+}
+
+
+/* styling for the selections on the second section */
+#leave-period-selection-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 5px;
+}
+
+.leave-period-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: var(--color-secondary);
+}
+
+.leave-period-line select {
+    padding: 5px 10px;
+    border-radius: 0px;
+    border: 0px;
+    border-bottom: 1px solid white;
+    background-color: transparent;
+    font-size: 14px;
+}
+
+.leave-period-line span {
+    font-size: 14px;
+    color: #333;
+}
+
+.add-line-button {
+    padding: 5px 10px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
 }
