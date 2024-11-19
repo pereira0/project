@@ -1,5 +1,5 @@
 import { setupForm } from './first_step.js';
-import { helpLanding } from './help.js'
+import { helpLanding } from './help_text.js'
 
 const appDiv = document.getElementById('app');
 
@@ -19,7 +19,7 @@ function renderLandingPage() {
 
     // populate help button for this page
     const helpContent = document.getElementById('help-content-sp')
-    helpContent.appendChild(helpLanding)
+    helpContent.innerHTML = helpLanding
 
     // Add event listener for starting the simulation
     document.getElementById('start-simulation').addEventListener('click', () => {

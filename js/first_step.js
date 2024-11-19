@@ -1,9 +1,14 @@
 import { formatDate } from './reusable.js'
 import { secondStep } from './second_step.js';
+import { helpFirstStep } from './help_text.js';
 
 // Function to set up the form after selecting the baby's birth date
 export function setupForm(babyBirthDate) {
     const appDiv = document.getElementById('app');
+
+    // populate help button for this page
+    const helpContent = document.getElementById('help-content-sp')
+    helpContent.innerHTML = helpFirstStep
 
     // update the mom's leave
     const momLeave = []; // Array to store the leave periods
