@@ -10,7 +10,7 @@ export function setupForm(babyBirthDate) {
     const startDate = new Date(babyBirthDate); // Convert the babyBirthDate into a Date object
     // Calculate the end date for the first leave (42 days after start date)
     const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + 42); // Add 42 days to the start date
+    endDate.setDate(startDate.getDate() + 41); // Add 41 days to the start date
     momLeave.push([startDate, endDate]);
 
     const formattedBirthDate = formatDate(new Date(babyBirthDate)); 
@@ -21,7 +21,8 @@ export function setupForm(babyBirthDate) {
     appDiv.innerHTML = `
         <h1>Parte 1 de 3 - Licença Parental Inicial</h1>
         <p>Na licença parental inicial, a mãe tem a obrigação de tirar 6 semanas (42 dias) logo após o nascimento, e o pai 1 semana (7 dias). O pai também tem obrigação de tirar mais 3 semanas (21 dias) durante as restantes 5 semanas da mãe.</p>
-        <p>O bebé nasceu ou vai nascer a <b>${formattedBirthDate}</b>. A mãe tem a licença inicial de 6 semanas (42 dias) de ${momLeaveStart} a ${momLeaveEnds} .</p>
+        <p>Data de nascimento: <b>${formattedBirthDate}</b>.</p>
+        <p>A mãe tem a licença inicial de 6 semanas (42 dias): <b>${momLeaveStart} a ${momLeaveEnds}</b>.</p>
         <div id="form-container">
             <!-- Questions will be dynamically added here -->
         </div>
@@ -55,8 +56,6 @@ export function setupForm(babyBirthDate) {
             // Stop further processing if validation fails
             return;
         }
-
-        console.log("It works up to here.")
         
         // passar para o proximo passo com a informação das licenças escolhidas e da data de nascimento
         secondStep(babyBirthDate, momLeave, dadLeave);
@@ -66,6 +65,8 @@ export function setupForm(babyBirthDate) {
         document.getElementById('week-2').checked = true;
         document.getElementById('week-3').checked = true;
         document.getElementById('week-4').checked = true;
+        document.getElementById('week-5').checked = false;
+        document.getElementById('week-6').checked = false;
     });
 }
 
@@ -80,11 +81,7 @@ function generateWeekSelection(babyBirthDate) {
     const firstWeekEnd = new Date(startDate);
     firstWeekEnd.setDate(startDate.getDate() + 6);
 
-    const primeiraSemana = document.createElement('p');
-    primeiraSemana.textContent = `Semana 1 (obrigatória): ${formatDate(startDate)} a ${formatDate(firstWeekEnd)}`;
-    jointLeaveWeeksDiv.appendChild(primeiraSemana);
-
-    for (let i = 1; i < 6; i++) { // 5 weeks of potential joint leave, select 3
+    for (let i = 0; i < 6; i++) { // 5 weeks of potential joint leave, select 3
         const weekStart = new Date(startDate);
         weekStart.setDate(startDate.getDate() + i * 7);
 
@@ -100,6 +97,11 @@ function generateWeekSelection(babyBirthDate) {
         const label = document.createElement('label');
         label.setAttribute('for', `week-${i + 1}`);
         label.textContent = `Semana ${i + 1}: ${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
+
+        if (i === 0) {
+            checkbox.disabled = true;
+            label.textContent = `Semana ${i + 1} (obrigatório): ${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
+        }
 
         jointLeaveWeeksDiv.appendChild(checkbox);
         jointLeaveWeeksDiv.appendChild(label);

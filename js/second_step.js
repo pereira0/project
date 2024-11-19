@@ -12,15 +12,11 @@ export function secondStep(babyBirthDate, momLeave, dadLeave) {
 
     generateCalendar(babyBirthDate, momLeave, dadLeave)
 
-    // Display Mom's leave periods
-    for (let i = 0; i < momLeave.length; i++) {
-        appDiv.innerHTML += `<p>Licença da mãe: ${formatDate(momLeave[i][0])} a ${formatDate(momLeave[i][1])}.</p>`;
-    }
+    appDiv.innerHTML += `
+        <p>A segunda parte da licença inicial é um bocado mais complexa. Basicamente existem 5 hipóteses:</p>
+    `;
 
-    // Display Dad's leave periods (fixing the incorrect label)
-    for (let i = 0; i < dadLeave.length; i++) {
-        appDiv.innerHTML += `<p>Licença do pai: ${formatDate(dadLeave[i][0])} a ${formatDate(dadLeave[i][1])}.</p>`;
-    }
+    generateOptions();  // Call the new function to generate the options
 
 }
 
@@ -33,7 +29,8 @@ function generateCalendar(babyBirthDate, momsLeave, dadsLeave) {
     // Set the start and end dates for the calendar
     const startDate = new Date(babyBirthDate);
     const endDate = findLatestDate(momsLeave, dadsLeave);
-
+    console.log(endDate)
+    
     let currentDate = new Date(startDate);
 
     // Loop through each month
@@ -81,10 +78,12 @@ function generateCalendar(babyBirthDate, momsLeave, dadsLeave) {
                 const leaveEnd = new Date(range[1]);
                 return currentDay >= leaveStart && currentDay <= leaveEnd;
             });
- 
-            // Check if it'sbirthdate
-            const isBirthDate = currentDate == babyBirthDate
 
+            const isBirthDate = currentDay.getFullYear() === new Date(babyBirthDate).getFullYear() &&
+                    currentDay.getMonth() === new Date(babyBirthDate).getMonth() &&
+                    currentDay.getDate() === new Date(babyBirthDate).getDate();
+
+ 
             // Apply joint-leave if the day is in both Mom's and Dad's leave periods
             if (isBirthDate) {
                 dayDiv.classList.add('birthdate');
@@ -110,6 +109,9 @@ function generateCalendar(babyBirthDate, momsLeave, dadsLeave) {
 
         // Move to the next month
         currentDate.setMonth(currentDate.getMonth() + 1);
+        currentDate.setDate(1);
+        console.log(currentDate)
+
 
     }
 
@@ -148,6 +150,7 @@ function addLegend(calendarDiv) {
     legendDiv.classList.add('legend');
 
     const legendItems = [
+        { color: '#5e6472', label: "Nascimento (conta para licença)" },
         { color: '#fb7e3c', label: "Licença conjunta" },
         { color: '#f3d13c', label: "Licença da mãe" },
         { color: '#02a890', label: "Licença do pai" }
@@ -161,8 +164,8 @@ function addLegend(calendarDiv) {
         const colorBox = document.createElement('div');
         colorBox.style.backgroundColor = item.color;
         colorBox.classList.add('color-box');
-        colorBox.style.width = "20px";
-        colorBox.style.height = "20px";
+        colorBox.style.width = "10px";
+        colorBox.style.height = "10px";
         colorBox.style.display = "inline-block";
         colorBox.style.marginRight = "8px";
 
@@ -174,13 +177,48 @@ function addLegend(calendarDiv) {
         legendItem.style.display = "flex";
         legendItem.style.alignItems = "center";
         legendItem.style.marginBottom = "8px";
+        legendItem.style.fontSize = '0.9rem';
 
         legendDiv.appendChild(legendItem);
     });
 
+    legendDiv.style.width = '100%';
+    legendDiv.style.alignItems = 'center';
+    legendDiv.style.justifyContent = 'center';
     legendDiv.style.marginTop = "20px";
     legendDiv.style.display = "flex";
     legendDiv.style.flexDirection = "row";
     legendDiv.style.gap = "10px";
     calendarDiv.appendChild(legendDiv);
+}
+
+// Function to generate the 3 options for the user to choose from
+function generateOptions() {
+    const appDiv = document.getElementById('app');
+
+    const optionsSection = document.createElement('div');
+    optionsSection.classList.add('second-step-options-container');  
+
+    const options = [
+        { id: 'option-1', title: 'Opção 1', total: '120 dias', description: 'tirados inteiramente pela mãe.', price: '100% RR' },
+        { id: 'option-2', title: 'Opção 2', total: '150 dias', description: 'tirados inteiramente pela mãe.', price: '80% RR' },
+        { id: 'option-3', title: 'Opção 3', total: '150 dias partilhados', description: '120 (ou menos) são tirados pela mãe e 30 (ou mais) são tirados pelo pai (para além do período incial).', price: '100% RR' },
+        { id: 'option-4', title: 'Opção 4', total: '180 dias partilhados', description: '150 (ou menos) são tirados pela mãe e 30 (ou mais) são tirados pelo pai (para além do período incial).', price: '83% RR' },
+        { id: 'option-5', title: 'Opção 5', total: '180 dias partilhados', description: '120 (ou menos) são tirados pela mãe e 60 (ou mais) são tirados pelo pai (para além do período incial).', price: '90% RR' }
+    ];
+
+    options.forEach(option => {
+        const optionDiv = document.createElement('div');
+        optionDiv.classList.add('second-step-option'); 
+        optionDiv.innerHTML = `
+            <h3>${option.title}</h3>
+            <h4>${option.total}</h4>
+            <p>${option.description}</p>
+            <p><strong>${option.price}</strong></p>
+            <button id="${option.id}">Escolher</button>
+        `;
+        optionsSection.appendChild(optionDiv);
+    });
+
+    appDiv.appendChild(optionsSection);
 }
