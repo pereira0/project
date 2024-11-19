@@ -1,4 +1,5 @@
 import { formatDate, getDaysBetweenDates } from './reusable.js'
+import { generateCalendar } from './reusable.js';
 
 // Function to set up the form after selecting the baby's birth date
 export function thirdStep(babyBirthDate, momLeave, dadLeave) {
@@ -6,6 +7,7 @@ export function thirdStep(babyBirthDate, momLeave, dadLeave) {
 
     appDiv.innerHTML = `
         <h1>Parte 2 de 3 - Segunda parte da licença inicial</h1>
+        <div id='calendar'></div>
     `;
 
     generateOptions();  // Call the new function to generate the options
