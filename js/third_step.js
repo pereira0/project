@@ -1,6 +1,6 @@
-import { formatDate, getDaysBetweenDates } from './reusable.js'
-import { generateCalendar } from './reusable.js';
-import { helpThirdStep } from './help_text.js';
+import { formatDate, getDaysBetweenDates } from '../components/reusable.js'
+import { generateCalendar } from '../components/reusable.js';
+import { helpThirdStep } from '../components/help_text.js';
 import { secondStep } from './second_step.js';
 
 // Function to set up the form after selecting the baby's birth date

@@ -1,6 +1,6 @@
 import { setupForm } from './first_step.js';
-import { helpLanding } from './help_text.js'
-import { data_storage } from './reusable.js';
+import { helpLanding } from '../components/help_text.js'
+import { data_storage } from '../components/reusable.js';
 
 const appDiv = document.getElementById('app');
 

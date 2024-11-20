@@ -1,4 +1,4 @@
-import { generateCalendar } from './reusable.js'
+import { generateCalendar } from '../components/reusable.js'
 import { thirdStep } from './third_step.js';
 import { setupForm } from './first_step.js';
 

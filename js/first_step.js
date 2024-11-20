@@ -1,6 +1,6 @@
-import { formatDate } from './reusable.js'
+import { formatDate } from '../components/reusable.js'
 import { secondStep } from './second_step.js';
-import { helpFirstStep } from './help_text.js';
+import { helpFirstStep } from '../components/help_text.js';
 import { renderLandingPage } from './app.js';
 
 // Function to set up the form after selecting the baby's birth date
