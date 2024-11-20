@@ -5,9 +5,7 @@ import { secondStep } from './second_step.js';
 
 // Function to set up the form after selecting the baby's birth date
 export function thirdStep(data_storage) {
-    // hide original return button 
-    const returnButton = document.getElementById('return-btn')
-    returnButton.hidden = true
+    const returnButton = document.getElementById('return-btn') // get original button
 
     // get data from storage
     const babyBirthDate = data_storage.secondStep.babyBirthDate;
@@ -31,7 +29,7 @@ export function thirdStep(data_storage) {
 
     generateOptions(babyBirthDate, momLeave, dadLeave);  // Call the new function to generate the options
 
-    document.getElementById('return-btn').addEventListener('click', () => {
+    returnButton.addEventListener('click', () => {
         const calendarElement = document.getElementById('calendar');
         const choicesElement = document.getElementById('choices-li');
     
@@ -344,9 +342,9 @@ function calculateEndDate(startDate, duration) {
 
 // remove options buttons
 function removeOptionsContainer(){
-    const optionsContainer = document.querySelector('.second-step-options-container');
+    const optionsContainer = document.getElementById('choices-li');
     if (optionsContainer) {
-        optionsContainer.remove(); // Removes the element from the DOM
+        optionsContainer.innerHTML = ''; // Removes the element from the DOM
     }
 
 }
