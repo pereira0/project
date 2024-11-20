@@ -18,4 +18,11 @@ const helpFirstStep = `
     <p>Fontes:<br>${fontes}</p>
 `
 
-export { helpLanding, helpFirstStep };
+const helpThirdStep = `
+    <h2>Precisas de ajuda?</h2>
+    <p><b>RR - Remuneração de Referência</b>: média das remunerações registadas na SS no período dos seis meses mais antigos dos últimos oito prévios ao mês do impedimento para o trabalho.
+    </p>
+    <p>Fontes:<br>${fontes}</p>
+`
+
+export { helpLanding, helpFirstStep, helpThirdStep };

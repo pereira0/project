@@ -162,7 +162,6 @@ input[type="date"] {
     text-align: center;
 }
 
-
 /* Specific styles for the options section in secondStep */
 .second-step-options-container {
     display: flex;
@@ -205,6 +204,7 @@ input[type="date"] {
     font-size: 1rem;
     border-radius: 5px;
     cursor: pointer;
+    align-self: flex-end;
     transition: background-color 0.3s ease;
 }
 
@@ -356,3 +356,29 @@ input[type="date"] {
     visibility: visible;
     opacity: 1;
 }
+
+/* return button */
+.return-button {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: transparent; 
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 1000; /* Ensure it stays on top */
+}
+
+.return-button:hover {
+    transform: scale(1.1); /* Slight zoom effect */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.return-button:active {
+    transform: scale(0.95); /* Slight "press" effect */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+

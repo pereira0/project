@@ -1,9 +1,13 @@
 import { formatDate } from './reusable.js'
 import { secondStep } from './second_step.js';
 import { helpFirstStep } from './help_text.js';
+import { renderLandingPage } from './app.js';
 
 // Function to set up the form after selecting the baby's birth date
-export function setupForm(babyBirthDate) {
+export function setupForm(data_storage) {
+    // get data from previous step
+    const babyBirthDate = data_storage.firstStep.babyBirthDate
+    // get app div
     const appDiv = document.getElementById('app');
 
     // populate help button for this page
@@ -62,8 +66,12 @@ export function setupForm(babyBirthDate) {
             return;
         }
         
+        // populate object
+        data_storage.secondStep.babyBirthDate = babyBirthDate
+        data_storage.secondStep.momLeave = momLeave
+        data_storage.secondStep.dadLeave = dadLeave
         // passar para o proximo passo com a informação das licenças escolhidas e da data de nascimento
-        secondStep(babyBirthDate, momLeave, dadLeave);
+        secondStep(data_storage);
     });
 
     document.getElementById('quick-fill-second').addEventListener('click', () => {
@@ -72,6 +80,13 @@ export function setupForm(babyBirthDate) {
         document.getElementById('week-4').checked = true;
         document.getElementById('week-5').checked = false;
         document.getElementById('week-6').checked = false;
+    });
+
+    // return button 
+    const returnButton = document.getElementById('return-btn')
+    returnButton.hidden = false
+    returnButton.addEventListener('click', () => {
+        renderLandingPage()
     });
 }
 

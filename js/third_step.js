@@ -1,56 +1,60 @@
 import { formatDate, getDaysBetweenDates } from './reusable.js'
 import { generateCalendar } from './reusable.js';
+import { helpThirdStep } from './help_text.js';
+import { secondStep } from './second_step.js';
 
 // Function to set up the form after selecting the baby's birth date
-export function thirdStep(babyBirthDate, momLeave, dadLeave) {
+export function thirdStep(data_storage) {
+    // get data from storage
+    const babyBirthDate = data_storage.secondStep.babyBirthDate
+    const momLeave = data_storage.secondStep.momLeave
+    const dadLeave = data_storage.secondStep.dadLeave
+
+    // get app div
     const appDiv = document.getElementById('app');
 
+    // populate help button for this page
+    const helpContent = document.getElementById('help-content-sp')
+    helpContent.innerHTML = helpThirdStep
+    
+    // start content
     appDiv.innerHTML = `
         <h1>Parte 2 de 3 - Segunda parte da licença inicial</h1>
-        <div id='calendar'></div>
     `;
 
     generateOptions();  // Call the new function to generate the options
 
     document.getElementById('option-1').addEventListener('click', () => {
-        // update mom array
-        momLeave = updateMomLeaveWith120Days(babyBirthDate, momLeave)
-        // remove options buttons
-        const optionsContainer = document.querySelector('.second-step-options-container');
-        if (optionsContainer) {
-            optionsContainer.remove(); // Removes the element from the DOM
-        }
-        // generate new calendar
-        generateCalendar(babyBirthDate, momLeave, dadLeave)
+        momLeave = updateMomLeaveWith120Days(babyBirthDate, momLeave) // update mom array
+        removeOptionsContainer() // remove options container
+        generateCalendar(babyBirthDate, momLeave, dadLeave) // generate new calendar
     });
 
     document.getElementById('option-2').addEventListener('click', () => {
-        // update mom array
-        momLeave = updateMomLeaveWith150Days(babyBirthDate, momLeave)
-        // remove options buttons
-        const optionsContainer = document.querySelector('.second-step-options-container');
-        if (optionsContainer) {
-            optionsContainer.remove(); // Removes the element from the DOM
-        }
-        // generate new calendar
-        generateCalendar(babyBirthDate, momLeave, dadLeave)
+        momLeave = updateMomLeaveWith150Days(babyBirthDate, momLeave) // update mom array
+        removeOptionsContainer() // remove options container
+        generateCalendar(babyBirthDate, momLeave, dadLeave) // generate new calendar
     });
 
     document.getElementById('option-3').addEventListener('click', () => {
-
-        // remove options buttons
-        const optionsContainer = document.querySelector('.second-step-options-container');
-        if (optionsContainer) {
-            optionsContainer.remove(); // Removes the element from the DOM
-        }
-
-        // Generate the calendar with selectors
-        const leavePeriodSelection = createLeavePeriodSelection(babyBirthDate)
-        // Append it to the appDiv or another container
-        appDiv.appendChild(leavePeriodSelection);
+        removeOptionsContainer() // remove options container
+        const leavePeriodSelection = createLeavePeriodSelection(babyBirthDate) // Generate the calendar with selectors
+        appDiv.appendChild(leavePeriodSelection); // Append it to the appDiv or another container
         addResetAndValidateButton(appDiv, babyBirthDate);
     });
 
+    // return button
+    document.getElementById('return-btn').addEventListener('click', () => {
+        const optionsContainer = document.querySelector('.second-step-options-container');
+        if (optionsContainer) {
+            secondStep(data_storage)
+        } else {
+            const optionElement = document.querySelector('[id^="leave-period-selection-container"]');
+            optionElement.remove()
+            generateOptions();  // Call the new function to generate the options
+        }
+        
+    });
 }
 
 // Function to generate the 3 options for the user to choose from
@@ -58,8 +62,7 @@ function generateOptions() {
     const appDiv = document.getElementById('app');
 
     appDiv.innerHTML += `
-        <p>RR é a Remuneração de Referência - média das remunerações registadas na SS no período dos seis meses mais antigos dos últimos oito prévios ao mês do impedimento para o trabalho.</p>
-        <p>A segunda parte da licença inicial é um bocado mais complexa. Basicamente existem 5 hipóteses:</p></span>
+        <p>A segunda parte da licença inicial é um bocado mais complexa. Basicamente existem 5 hipóteses:</p>
         `;
 
     const optionsSection = document.createElement('div');
@@ -115,159 +118,6 @@ function updateMomLeaveWith150Days(babyBirthDate, momLeave) {
 
     return momLeave
 }
-
-// // functionality to help select longer range for 150 days+
-// function createLeavePeriodSelection(babyBirthDate, momLeave=[], dadLeave=[], duracao=150, minPai=0, minMae=42) {
-//     const container = document.createElement('div');
-//     container.id = 'leave-period-selection-container';
-
-//     // Header
-//     const header = document.createElement('h2');
-//     header.textContent = 'Planeie os períodos de licença';
-//     container.appendChild(header);
-
-//     // Initialize start date
-//     let currentStartDate = new Date(babyBirthDate);
-//     const maxEndDate = new Date(currentStartDate);
-//     maxEndDate.setDate(maxEndDate.getDate() + duracao - 1);
-//     console.log(maxEndDate)
-
-//     // Function to add a new selection line
-//     const addNewLine = (startDate) => {
-//         const lineDiv = document.createElement('div');
-//         lineDiv.classList.add('leave-period-line');
-
-//         // Dropdown for Mom/Dad
-//         const personSelect = document.createElement('select');
-//         personSelect.innerHTML = `
-//             <option value="mom">A mãe</option>
-//             <option value="dad">O pai</option>
-//         `;
-
-//         // Text in between
-//         const midText = document.createElement('span');
-//         midText.textContent = 'vai ficar de licença durante';
-
-//         const daysDifference = getDaysBetweenDates(startDate, maxEndDate)
-
-//         console.log(daysDifference)
-
-//         const optionsArr = [15,30,60,78,90,120]
-//         const durationSelect = document.createElement('select');
-//         durationSelect.innerHTML = ``
-
-
-//         for (let i = 0; i < optionsArr.length; i++) {
-//             console.log(daysDifference)
-//             if (daysDifference >= optionsArr[i]) {
-//                 durationSelect.innerHTML += `
-//                     <option value="${optionsArr[i]}">${optionsArr[i]} dias</option>
-//                 `;
-//             }
-//             else if (daysDifference - optionsArr[i-1] > 0 && daysDifference - optionsArr[i-1] >= 15){
-//                 durationSelect.innerHTML += `
-//                     <option value="${daysDifference}">${daysDifference} dias</option>
-//                 `;
-//             }
-//         }
-
-//         // Dates display
-//         const datesDisplay = document.createElement('span');
-//         updateDatesDisplay(startDate, 15, datesDisplay); // Default to 15 days
-
-//         // Add listeners to update dates dynamically
-//         durationSelect.addEventListener('change', () => {
-//             const selectedDuration = parseInt(durationSelect.value, 10);
-//             updateDatesDisplay(startDate, selectedDuration, datesDisplay);
-//         });
-
-//         // Add the `+` button
-//         const addButton = document.createElement('button');
-//         addButton.textContent = '+';
-//         addButton.classList.add('add-line-button');
-
-//         // Button listener to add a new line
-//         addButton.addEventListener('click', () => {
-//             const selectedDuration = parseInt(durationSelect.value, 10);
-//             const endDate = calculateEndDate(startDate, selectedDuration);
-
-//             if (endDate < maxEndDate) {
-//                 // update values on mom and dad leave
-//                 if (durationSelect.value === "mom") {
-//                     momLeave.push([startDate, endDate]);
-
-//                 }
-//                 else if (durationSelect.value === "dad") {
-//                     dadLeave.push([startDate, endDate]);
-//                 }
-
-//                 // disable buttons
-//                 addButton.disabled = true;
-//                 durationSelect. disabled = true;
-//                 personSelect.disabled = true;
-
-//                 // reset date start for following line
-//                 currentStartDate = new Date(endDate);
-//                 currentStartDate.setDate(currentStartDate.getDate() + 1); // Start next day
-//                 // remove text explanation
-//                 const textInfo = document.getElementById('text-explanation');
-//                 textInfo.remove() 
-//                 // add a new line
-//                 addNewLine(currentStartDate);
-//             } else {
-//                 alert('A data final ultrapassa o limite permitido de 150 dias.');
-//             }
-//         });
-
-//         // Append elements to the line
-//         lineDiv.appendChild(personSelect);
-//         lineDiv.appendChild(midText);
-//         lineDiv.appendChild(durationSelect);
-//         lineDiv.appendChild(datesDisplay);
-//         lineDiv.appendChild(addButton);
-
-//         // Add line to the container
-//         container.appendChild(lineDiv);
-
-//         // add text line
-//         const explainerText = document.createElement('div');
-//         explainerText.id = 'text-explanation';
-//         explainerText.innerHTML = `
-//             <p>A licença inicial de <b>42 dias (6 semanas)</b> para a mãe é obrigatória. Como selecionaram <b>${duracao}</b> de licença total, os restantes ${duracao - 42} dias poderão ser gozados por ambos, em períodos mínimos de 15 dias. Para a opção da mãe gozar 120 dias seguidos e o pai gozer os 30 dias finais, selecionar 78 dias.</p>
-//         `;
-//         container.appendChild(explainerText);
-//     };
-
-//     // Function to add mom's initial leave
-//     const momInitialLeave = (startDate) => {
-//         const lineDiv = document.createElement('div');
-//         lineDiv.classList.add('leave-period-line');
-//         const textoInside = document.createElement('span');
-//         textoInside.textContent = `A mãe vai ficar de licença inicial obrigatória durante 42 dias:`;
-
-//         // Dates display
-//         const datesDisplay = document.createElement('span');
-//         updateDatesDisplay(startDate, 42, datesDisplay); 
-
-//         // Append elements to the line
-//         lineDiv.appendChild(textoInside);
-//         lineDiv.appendChild(datesDisplay);
-
-//         // Add line to the container
-//         container.appendChild(lineDiv);
-
-//         const selectedDuration = 43;
-//         const endDate = calculateEndDate(startDate, selectedDuration);
-//         return endDate;
-//     }
-
-//     // Mom leave
-//     currentStartDate = momInitialLeave(currentStartDate);
-//     // add starter line
-//     addNewLine(currentStartDate);
-
-//     return container;
-// }
 
 // Function to create leave period selection
 function createLeavePeriodSelection(babyBirthDate, momLeave = [], dadLeave = [], duracao = 150, minPai = 30, minMae = 42) {
@@ -476,4 +326,13 @@ function calculateEndDate(startDate, duration) {
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + duration - 1);
     return endDate;
+}
+
+// remove options buttons
+function removeOptionsContainer(){
+    const optionsContainer = document.querySelector('.second-step-options-container');
+    if (optionsContainer) {
+        optionsContainer.remove(); // Removes the element from the DOM
+    }
+
 }

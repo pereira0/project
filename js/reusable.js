@@ -1,3 +1,27 @@
+// object for the data to be parsed back and forth
+const data_storage = {
+    firstStep: {
+        babyBirthDate: null, // Set to actual date when known
+        momLeave: [], // Array of leave periods for mom
+        dadLeave: []  // Array of leave periods for dad
+    },
+    secondStep: {
+        babyBirthDate: null, // Typically same as firstStep, included for flexibility
+        momLeave: [],
+        dadLeave: []
+    },
+    thirdStep: {
+        babyBirthDate: null,
+        momLeave: [],
+        dadLeave: []
+    },
+    fourthStep: {
+        babyBirthDate: null,
+        momLeave: [],
+        dadLeave: []
+    }
+};
+
 // Utility function to format a date as "DD/MM/YYYY"
 function formatDate(date) {
     return date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: '2-digit' });
@@ -178,4 +202,4 @@ function addLegend(calendarDiv) {
 }
 
 // Export the classes so that they can be imported in other files like script.js
-export { formatDate, getDaysBetweenDates, generateCalendar };
+export { formatDate, getDaysBetweenDates, generateCalendar, data_storage };
