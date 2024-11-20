@@ -6,7 +6,7 @@ import { renderLandingPage } from './app.js';
 // Function to set up the form after selecting the baby's birth date
 export function setupForm(data_storage) {
     // get data from previous step
-    const babyBirthDate = data_storage.firstStep.babyBirthDate
+    const babyBirthDate = data_storage.babyBirthDate
     // get app div
     const appDiv = document.getElementById('app');
 
@@ -67,7 +67,6 @@ export function setupForm(data_storage) {
         }
         
         // populate object
-        data_storage.secondStep.babyBirthDate = babyBirthDate
         data_storage.secondStep.momLeave = momLeave
         data_storage.secondStep.dadLeave = dadLeave
         // passar para o proximo passo com a informação das licenças escolhidas e da data de nascimento

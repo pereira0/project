@@ -1,22 +1,19 @@
 // object for the data to be parsed back and forth
 const data_storage = {
+    babyBirthDate: null,
     firstStep: {
-        babyBirthDate: null, // Set to actual date when known
         momLeave: [], // Array of leave periods for mom
         dadLeave: []  // Array of leave periods for dad
     },
     secondStep: {
-        babyBirthDate: null, // Typically same as firstStep, included for flexibility
         momLeave: [],
         dadLeave: []
     },
     thirdStep: {
-        babyBirthDate: null,
         momLeave: [],
         dadLeave: []
     },
     fourthStep: {
-        babyBirthDate: null,
         momLeave: [],
         dadLeave: []
     }
@@ -35,7 +32,12 @@ function getDaysBetweenDates(startDate, endDate) {
 }
 
 // Function to generate and display the calendar
-function generateCalendar(babyBirthDate, momsLeave, dadsLeave) {
+function generateCalendar(babyBirthDateIn, data_storage_step) {
+    const babyBirthDate = babyBirthDateIn;
+    const momsLeave = data_storage_step.momLeave;
+    const dadsLeave = data_storage_step.dadLeave;
+
+
     const calendarDiv = document.getElementById('calendar');
     calendarDiv.innerHTML = ''; // Clear any previous calendar
 
@@ -201,5 +203,15 @@ function addLegend(calendarDiv) {
     calendarDiv.appendChild(legendDiv);
 }
 
+// options for initial leave
+const options = [
+    { id: 'option-1', title: 'Opção 1', total: '120 dias', description: 'tirados inteiramente pela mãe.', price: '100% RR' },
+    { id: 'option-2', title: 'Opção 2', total: '150 dias', description: 'tirados inteiramente pela mãe.', price: '80% RR' },
+    { id: 'option-3', title: 'Opção 3', total: '150 dias partilhados', description: '120 (ou menos) são tirados pela mãe e 30 (ou mais) são tirados pelo pai (para além do período incial).', price: '100% RR' },
+    { id: 'option-4', title: 'Opção 4', total: '180 dias partilhados', description: '150 (ou menos) são tirados pela mãe e 30 (ou mais) são tirados pelo pai (para além do período incial).', price: '83% RR' },
+    { id: 'option-5', title: 'Opção 5', total: '180 dias partilhados', description: '120 (ou menos) são tirados pela mãe e 60 (ou mais) são tirados pelo pai (para além do período incial).', price: '90% RR' }
+];
+
 // Export the classes so that they can be imported in other files like script.js
-export { formatDate, getDaysBetweenDates, generateCalendar, data_storage };
+export { formatDate, getDaysBetweenDates, generateCalendar, data_storage, options };
+

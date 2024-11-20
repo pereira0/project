@@ -29,7 +29,7 @@ export function renderLandingPage() {
             alert('Seleciona uma data!');
             return;
         }
-        data_storage.firstStep.babyBirthDate = dateInput // populate the dictionary with the data info
+        data_storage.babyBirthDate = dateInput // populate the dictionary with the data info
         setupForm(data_storage);
     });
 
