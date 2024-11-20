@@ -10,13 +10,15 @@ export function secondStep(data_storage) {
 
     // Replace the landing page content with the form content
     appDiv.innerHTML = `
-        <h1>Parte 2 de 3 - Segunda parte da licença inicial</h1>
+        <h1>As primeiras seis semanas!</h1>
         <div id="calendar"></div>
-        <p>Estas são as primeiras 6 semanas da licença inicial! No próximo passo vamos perceber quais são as opções para o resto da licença inicial.</p>
+        <p>No próximo passo vamos perceber quais são as opções para o resto da licença inicial.</p>
         <button id="next-step-second">Próximo passo</button>
     `;
 
-    generateCalendar(data_storage.babyBirthDate, data_storage.secondStep)
+    const calendarSecondStep = generateCalendar(data_storage.babyBirthDate, data_storage.secondStep) // generate calendar
+    const calendarLocation = document.getElementById('calendar') // check calendar location
+    calendarLocation.appendChild(calendarSecondStep) // add calendar
 
     // Add event listener for the "Generate Calendar" button
     document.getElementById('next-step-second').addEventListener('click', () => { 
@@ -31,5 +33,4 @@ export function secondStep(data_storage) {
     document.getElementById('return-btn').addEventListener('click', () => {
         setupForm(data_storage)
     });
-
 }

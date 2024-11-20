@@ -7,6 +7,7 @@ import { secondStep } from './second_step.js';
 export function thirdStepSecond(data_storage) {
      // get return button
     const returnButton = document.getElementById('return-btn')
+
     // populate help button for this page
     const helpContent = document.getElementById('help-content-sp');
     helpContent.innerHTML = helpThirdStep;
@@ -17,14 +18,14 @@ export function thirdStepSecond(data_storage) {
     // start content
     appDiv.innerHTML = `<div id='content'></div>`;
     // populate appDiv
-    choicesCreation('content');
+    choicesCreation('content', data_storage);
 
 }
 
 
-function choicesCreation(divName) {
-    const choicesCreation = document.getElementById(divName)
-    choicesCreation.innerHTML = `<h2>O resto da licença inicial</h2>`
+function choicesCreation(divName, data_storage) {
+    const containerDiv = document.getElementById(divName)
+    containerDiv.innerHTML = `<h2>O resto da licença inicial</h2>`
 
     const optionsSection = document.createElement('div');
     optionsSection.classList.add('second-step-options-container'); 
@@ -45,17 +46,21 @@ function choicesCreation(divName) {
     });
 
     // add to HTML    
-    choicesCreation.appendChild(optionsSection);
+    containerDiv.appendChild(optionsSection);
 
-    // add functionality to the buttons
+    // add functionality to the option buttons
     options.forEach(option => {
         document.getElementById(option.id).addEventListener('click', () => {
             // FOR EACH BUTTON
             // remove the current div or replace with empty
-            choicesCreation.innerHTML = ``
-            // populate the mom and dad leave arrays
+            containerDiv.innerHTML = ``
+
+            // check which button was clicked and generate logic to populate mom and dad leave arrays into the THIRD STEP of data_storage
 
             // show the calendar
+            // THIS NEEDS TO CHANGE TO THIRD STEP
+            const calendarLoc = generateCalendar(data_storage.babyBirthDate, data_storage.secondStep)
+            containerDiv.appendChild(calendarLoc)
 
         });
 

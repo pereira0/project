@@ -14,13 +14,16 @@ const helpFirstStep = `
     <h2>Precisas de ajuda?</h2>
     <p>Existem dois tipos de licença parental: a <b>licença parental inicial</b> e a <b>licença parental alargada</b>. Agora ao início vamos focar-nos na licença parental inicial, que pode ser de 120, 150 ou 180 dias. 
         <br>Neste primeiro passo vamos ver como funcionam as primeiras 6 semanas (42 dias) da licença, pois é diferente do resto do tempo da licença parental inicial.    
+        <br>O dia de nascimento conta para a licença.
     </p>
     <p>Fontes:<br>${fontes}</p>
 `
 
 const helpThirdStep = `
     <h2>Precisas de ajuda?</h2>
-    <p><b>RR - Remuneração de Referência</b>: média das remunerações registadas na SS no período dos seis meses mais antigos dos últimos oito prévios ao mês do impedimento para o trabalho.
+    <p>
+        <b>RR - Remuneração de Referência</b>: média das remunerações registadas na SS no período dos seis meses mais antigos dos últimos oito prévios ao mês do impedimento para o trabalho.
+        <br>O dia de nascimento conta para a licença.
     </p>
     <p>Fontes:<br>${fontes}</p>
 `

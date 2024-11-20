@@ -33,12 +33,15 @@ function getDaysBetweenDates(startDate, endDate) {
 
 // Function to generate and display the calendar
 function generateCalendar(babyBirthDateIn, data_storage_step) {
+    // get variables
     const babyBirthDate = babyBirthDateIn;
     const momsLeave = data_storage_step.momLeave;
     const dadsLeave = data_storage_step.dadLeave;
 
+    const calendarDiv = document.createElement('div')
+    calendarDiv.id = 'calendar'
 
-    const calendarDiv = document.getElementById('calendar');
+    // const calendarDiv = document.getElementById('calendar');
     calendarDiv.innerHTML = ''; // Clear any previous calendar
 
     // Set the start and end dates for the calendar
@@ -128,6 +131,8 @@ function generateCalendar(babyBirthDateIn, data_storage_step) {
 
     // add legend
     addLegend(calendarDiv);
+
+    return calendarDiv
 }
 
 // Function to find the latest date from both momLeave and dadLeave
