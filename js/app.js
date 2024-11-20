@@ -30,7 +30,6 @@ export function renderLandingPage() {
             return;
         }
         data_storage.firstStep.babyBirthDate = dateInput // populate the dictionary with the data info
-        console.log(data_storage)
         setupForm(data_storage);
     });
 

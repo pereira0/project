@@ -5,63 +5,60 @@ import { secondStep } from './second_step.js';
 
 // Function to set up the form after selecting the baby's birth date
 export function thirdStep(data_storage) {
+    // hide original return button 
+    const returnButton = document.getElementById('return-btn')
+    returnButton.hidden = true
+
     // get data from storage
-    const babyBirthDate = data_storage.secondStep.babyBirthDate
-    const momLeave = data_storage.secondStep.momLeave
-    const dadLeave = data_storage.secondStep.dadLeave
+    const babyBirthDate = data_storage.secondStep.babyBirthDate;
+    let momLeave = data_storage.secondStep.momLeave;
+    let dadLeave = data_storage.secondStep.dadLeave;
 
     // get app div
     const appDiv = document.getElementById('app');
 
     // populate help button for this page
-    const helpContent = document.getElementById('help-content-sp')
-    helpContent.innerHTML = helpThirdStep
+    const helpContent = document.getElementById('help-content-sp');
+    helpContent.innerHTML = helpThirdStep;
     
     // start content
     appDiv.innerHTML = `
         <h1>Parte 2 de 3 - Segunda parte da licença inicial</h1>
+        <div id="calendar"></div>
+        <div id="choices-li"></div>
+        <button id="return-btn" class="return-button">&#8592;</button>
     `;
 
-    generateOptions();  // Call the new function to generate the options
+    generateOptions(babyBirthDate, momLeave, dadLeave);  // Call the new function to generate the options
 
-    document.getElementById('option-1').addEventListener('click', () => {
-        momLeave = updateMomLeaveWith120Days(babyBirthDate, momLeave) // update mom array
-        removeOptionsContainer() // remove options container
-        generateCalendar(babyBirthDate, momLeave, dadLeave) // generate new calendar
-    });
-
-    document.getElementById('option-2').addEventListener('click', () => {
-        momLeave = updateMomLeaveWith150Days(babyBirthDate, momLeave) // update mom array
-        removeOptionsContainer() // remove options container
-        generateCalendar(babyBirthDate, momLeave, dadLeave) // generate new calendar
-    });
-
-    document.getElementById('option-3').addEventListener('click', () => {
-        removeOptionsContainer() // remove options container
-        const leavePeriodSelection = createLeavePeriodSelection(babyBirthDate) // Generate the calendar with selectors
-        appDiv.appendChild(leavePeriodSelection); // Append it to the appDiv or another container
-        addResetAndValidateButton(appDiv, babyBirthDate);
-    });
-
-    // return button
     document.getElementById('return-btn').addEventListener('click', () => {
-        const optionsContainer = document.querySelector('.second-step-options-container');
-        if (optionsContainer) {
-            secondStep(data_storage)
-        } else {
-            const optionElement = document.querySelector('[id^="leave-period-selection-container"]');
-            optionElement.remove()
-            generateOptions();  // Call the new function to generate the options
+        const calendarElement = document.getElementById('calendar');
+        const choicesElement = document.getElementById('choices-li');
+    
+        // Check if calendar has content
+        if (calendarElement && calendarElement.innerHTML.trim() !== '') {
+            console.log('Calendar has content, moving to generate options...');
+            calendarElement.innerHTML = ''
+            generateOptions(babyBirthDate, momLeave, dadLeave);  // Call the new function to generate the options
+        } 
+        // Check if choices-li has content
+        else if (choicesElement && choicesElement.innerHTML.trim() !== '') {
+            console.log('Choices have content, moving to the second step...');
+            secondStep(data_storage); // Proceed to second step
+        } 
+        // Handle case where neither has content
+        else {
+            console.error('Neither calendar nor choices have valid content.');
         }
-        
     });
+    
 }
 
 // Function to generate the 3 options for the user to choose from
-function generateOptions() {
-    const appDiv = document.getElementById('app');
+function generateOptions(babyBirthDate, momLeave, dadLeave) {
+    const optionsDiv = document.getElementById('choices-li')
 
-    appDiv.innerHTML += `
+    optionsDiv.innerHTML = `
         <p>A segunda parte da licença inicial é um bocado mais complexa. Basicamente existem 5 hipóteses:</p>
         `;
 
@@ -90,7 +87,28 @@ function generateOptions() {
         optionsSection.appendChild(optionDiv);
     });
 
-    appDiv.appendChild(optionsSection);
+    // add to HTML    
+    optionsDiv.appendChild(optionsSection);
+
+    document.getElementById('option-1').addEventListener('click', () => {
+        momLeave = updateMomLeaveWith120Days(babyBirthDate, momLeave) // update mom array
+        removeOptionsContainer() // remove options container
+        generateCalendar(babyBirthDate, momLeave, dadLeave) // generate new calendar
+    });
+
+    document.getElementById('option-2').addEventListener('click', () => {
+        momLeave = updateMomLeaveWith150Days(babyBirthDate, momLeave) // update mom array
+        removeOptionsContainer() // remove options container
+        generateCalendar(babyBirthDate, momLeave, dadLeave) // generate new calendar
+    });
+
+    document.getElementById('option-3').addEventListener('click', () => {
+        removeOptionsContainer() // remove options container
+        const leavePeriodSelection = createLeavePeriodSelection(babyBirthDate) // Generate the calendar with selectors
+        appDiv.appendChild(leavePeriodSelection); // Append it to the appDiv or another container
+        addResetAndValidateButton(appDiv, babyBirthDate);
+    });
+
 }
 
 // Function to update the momLeave array when option of 120 days is chosen
@@ -121,19 +139,17 @@ function updateMomLeaveWith150Days(babyBirthDate, momLeave) {
 
 // Function to create leave period selection
 function createLeavePeriodSelection(babyBirthDate, momLeave = [], dadLeave = [], duracao = 150, minPai = 30, minMae = 42) {
-    const container = document.createElement('div');
-    container.id = 'leave-period-selection-container';
-
-    // Header
-    const header = document.createElement('h2');
-    header.textContent = 'Planeie os períodos de licença';
-    container.appendChild(header);
+    const container = document.getElementById('calendar')
+    container.innerHTML = `
+        <div if='leave-period-selection-container'>
+            <h2>Planeie os períodos de licença</h2>
+        
+        </div>`;
 
     // Initialize start date
     let currentStartDate = new Date(babyBirthDate);
     const maxEndDate = new Date(currentStartDate);
     maxEndDate.setDate(maxEndDate.getDate() + duracao - 1);
-    console.log(maxEndDate)
 
     // Function to calculate and update mom/dad leave arrays
     const updateLeaveData = (startDate, duration, person) => {
@@ -262,8 +278,6 @@ function createLeavePeriodSelection(babyBirthDate, momLeave = [], dadLeave = [],
         currentStartDate = new Date(endDate);
         currentStartDate.setDate(currentStartDate.getDate() + 1); // Next day
     };
-
-    
 
     // Initialize with mom's leave and first line
     momInitialLeave();
