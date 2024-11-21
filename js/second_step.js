@@ -26,6 +26,7 @@ export function secondStep(data_storage) {
         // thirdStep(data_storage);
 
         // TEST THIRD STEP
+        console.log(data_storage)
         thirdStepSecond(data_storage);
     });
 

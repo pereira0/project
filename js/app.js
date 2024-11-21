@@ -2,6 +2,9 @@ import { setupForm } from './first_step.js';
 import { helpLanding } from '../components/help_text.js'
 import { data_storage } from '../components/reusable.js';
 
+import { testData} from '../components/testing.js';
+import { thirdStepSecond } from './third_step_v2.js';
+
 const appDiv = document.getElementById('app');
 
 // Function to render the landing page
@@ -35,8 +38,13 @@ export function renderLandingPage() {
 
     // Add event listener for quick fill
     document.getElementById('quick-fill-first').addEventListener('click', () => {
-        document.getElementById('baby-birth-date').value = '2024-11-18';
-        const dateInput = document.getElementById('baby-birth-date').value;
+
+        // AUTOFILL
+        // document.getElementById('baby-birth-date').value = '2024-11-18';
+        // const dateInput = document.getElementById('baby-birth-date').value;
+
+        // QUICK TESTING
+        thirdStepSecond(testData);
     });
 
     // return button 

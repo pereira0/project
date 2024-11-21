@@ -22,14 +22,14 @@ const data_storage = {
 // Utility function to format a date as "DD/MM/YYYY"
 function formatDate(date) {
     return date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: '2-digit' });
-}
+};
 
 function getDaysBetweenDates(startDate, endDate) {
     const start = new Date(startDate);
     const end = new Date(endDate);
     // Include the start date by adding 1
     return Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
-}
+};
 
 // Function to generate and display the calendar
 function generateCalendar(babyBirthDateIn, data_storage_step) {
@@ -133,7 +133,7 @@ function generateCalendar(babyBirthDateIn, data_storage_step) {
     addLegend(calendarDiv);
 
     return calendarDiv
-}
+};
 
 // Function to find the latest date from both momLeave and dadLeave
 function findLatestDate(momsLeave, dadsLeave) {
@@ -158,7 +158,7 @@ function findLatestDate(momsLeave, dadsLeave) {
 
     // Return the latest date found
     return latestDate;
-}
+};
 
 // Function to add the legend under the calendar
 function addLegend(calendarDiv) {
@@ -206,6 +206,14 @@ function addLegend(calendarDiv) {
     legendDiv.style.flexDirection = "row";
     legendDiv.style.gap = "10px";
     calendarDiv.appendChild(legendDiv);
+};
+
+// Calculate end date based on duration
+function calculateEndDate(startDate, duration) {
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + duration - 1);
+    formatDate(endDate);
+    return endDate;
 }
 
 // options for initial leave
@@ -218,5 +226,5 @@ const options = [
 ];
 
 // Export the classes so that they can be imported in other files like script.js
-export { formatDate, getDaysBetweenDates, generateCalendar, data_storage, options };
+export { formatDate, getDaysBetweenDates, generateCalendar, data_storage, options, calculateEndDate };
 
