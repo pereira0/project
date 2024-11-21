@@ -40,11 +40,11 @@ export function renderLandingPage() {
     document.getElementById('quick-fill-first').addEventListener('click', () => {
 
         // AUTOFILL
-        // document.getElementById('baby-birth-date').value = '2024-11-18';
-        // const dateInput = document.getElementById('baby-birth-date').value;
+        document.getElementById('baby-birth-date').value = '2024-11-18';
+        const dateInput = document.getElementById('baby-birth-date').value;
 
         // QUICK TESTING
-        thirdStepSecond(testData);
+        // thirdStepSecond(testData);
     });
 
     // return button 

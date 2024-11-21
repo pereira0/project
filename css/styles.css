@@ -234,6 +234,7 @@ input[type="date"] {
     border-bottom: 1px solid #ddd;
     border-radius: 10px;
     background-color: var(--color-secondary);
+    margin: 10px 0px;
     width: 100%;
     max-width: 800px; /* Add this to avoid stretching too wide */
     box-sizing: border-box; /* Ensures padding doesn't affect width */
