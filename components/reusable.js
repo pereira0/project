@@ -38,6 +38,13 @@ function getDaysBetweenDates(startDate, endDate) {
 };
 
 // Calculate end date based on duration
+/**
+ * 
+ * @param {Object} startDate - the start date we want to calculate
+ * @param {number} duration - number of days we want to calculate 
+ * 
+ * @returns {Object} endDate
+ */
 function calculateEndDate(startDate, duration) {
     const endDate = new Date(startDate);
     endDate.setDate(endDate.getDate() + duration - 1);

@@ -31,11 +31,11 @@ function getTotalLeaveDays(leavePeriods) {
     leavePeriods.forEach(period => {
         const startDate = new Date(period[0]);
         const endDate = new Date(period[1]);
-        
+
         // Calculate the difference in days
         const diffTime = endDate - startDate; // Difference in milliseconds
         const diffDays = diffTime / (1000 * 3600 * 24); // Convert to days
-        
+
         totalDays += diffDays;
     });
 
@@ -52,75 +52,84 @@ function alreadyPickedDates(dataStorageStep) {
         ...momLeave.map(([start, end]) => ["mom", start, end]),
         ...dadLeave.map(([start, end]) => ["dad", start, end]),
     ];
-    
+
     // Sort by startDate
     combinedLeave.sort((a, b) => new Date(a[1]) - new Date(b[1]));
-    
+
     // Combine adjacent leaves for the same person if `endDate` and `startDate` differ by 1 day
     const mergedLeave = combinedLeave.reduce((result, current) => {
         if (result.length === 0) {
-        result.push(current); // Start with the first item
-        return result;
+            result.push(current); // Start with the first item
+            return result;
         }
-    
+
         const last = result[result.length - 1];
         const lastEndDate = new Date(last[2]);
         const currentStartDate = new Date(current[1]);
-    
+
         // Check if last and current leave can be merged
         if (
-        last[0] === current[0] && // Same person (mom or dad)
-        (lastEndDate.getTime() + 86400000 === currentStartDate.getTime()) // End date + 1 day === Start date
+            last[0] === current[0] && // Same person (mom or dad)
+            (lastEndDate.getTime() + 86400000 === currentStartDate.getTime()) // End date + 1 day === Start date
         ) {
-        // Merge leaves by updating the end date of the last item
-        last[2] = current[2];
+            // Merge leaves by updating the end date of the last item
+            last[2] = current[2];
         } else {
-        // Otherwise, add the current item as a new entry
-        result.push(current);
+            // Otherwise, add the current item as a new entry
+            result.push(current);
         }
-    
+
         return result;
     }, []);
     return mergedLeave
 }
 
-/**
- * Creates a dashboard-style div to display data and replaces the provided container with it.
- * @param {HTMLElement} containerDiv - The div to be replaced with the new dashboard div.
- * @param {Object} data - The data to display.
- * @param {number} data.totalLeave - Total initial leave days.
- * @param {number} data.daysLeft - Remaining leave days to be chosen.
- * @param {number} data.dadMin - Minimum leave days required for the father.
- * @param {number} data.dadLeaveNewTime - Leave days the father has already chosen.
- */
+
+// create dashboard
 function createDashboard(containerDiv, data) {
     // Destructure the data object for easier access.
-    const totalLeave = data.totalLeave;
-    const daysLeft = data.daysLeft;
-    const dadMin = data.dadMin;
-    const dadLeaveNewTime = data.dadLeaveNewTime;
+    const { totalLeave, daysLeft, dadMin, dadLeaveNewTime } = data;
 
-    // Create the dashboard container.
+    // Create the dashboard container
     const dashboardDiv = document.createElement('div');
     dashboardDiv.classList.add('dashboard');
 
-    // Create individual data boxes.
-    const totalLeaveBox = createDataBox('Licença inicial total', `${totalLeave} dias`);
-    const daysLeftBox = createDataBox('Dias por escolher', `${daysLeft} dias`);
-    const dadMinBox = createDataBox('Mínimo do pai', `${dadMin} dias`);
+    // Helper to create individual boxes
+    function createBox(label, value, isHighlight = false) {
+        const boxDiv = document.createElement('div');
+        boxDiv.classList.add('dashboard-box');
+        if (isHighlight) {
+            boxDiv.classList.add('highlight');
+        }
 
-    // Conditionally formatted box for dad's leave time.
-    const dadLeaveNewTimeBox = createDataBox(
+        const labelDiv = document.createElement('div');
+        labelDiv.classList.add('dashboard-label');
+        labelDiv.textContent = label;
+
+        const valueDiv = document.createElement('div');
+        valueDiv.classList.add('dashboard-value');
+        valueDiv.textContent = value;
+
+        boxDiv.appendChild(labelDiv);
+        boxDiv.appendChild(valueDiv);
+        return boxDiv;
+    }
+
+    // Create the individual boxes
+    const totalLeaveBox = createBox('Licença inicial total', totalLeave);
+    const daysLeftBox = createBox('Dias por escolher', daysLeft);
+    const dadMinBox = createBox('Mínimo do pai', dadMin);
+    const dadLeaveBox = createBox(
         'Dias do pai já escolhidos',
-        `${dadLeaveNewTime} dias`,
-        dadLeaveNewTime >= dadMin ? 'green' : 'red'
+        dadLeaveNewTime,
+        dadLeaveNewTime >= dadMin // Highlight if condition is met
     );
 
-    // Append all data boxes to the dashboard.
+    // Append the boxes to the dashboard
     dashboardDiv.appendChild(totalLeaveBox);
     dashboardDiv.appendChild(daysLeftBox);
     dashboardDiv.appendChild(dadMinBox);
-    dashboardDiv.appendChild(dadLeaveNewTimeBox);
+    dashboardDiv.appendChild(dadLeaveBox);
 
     // Replace the existing container with the new dashboard.
     if (containerDiv && containerDiv.parentNode) {
@@ -128,41 +137,6 @@ function createDashboard(containerDiv, data) {
     }
 }
 
-/**
- * Helper function to create a styled data box.
- * @param {string} label - The label for the data box.
- * @param {string} value - The value to display in the data box.
- * @param {string} [textColor] - Optional text color for the value (e.g., "green" or "red").
- * @returns {HTMLElement} - The created data box element.
- */
-function createDataBox(label, value, textColor) {
-    // Create the container for the data box.
-    const dataBox = document.createElement('div');
-    dataBox.classList.add('data-box');
-
-    // Create the label element.
-    const labelElement = document.createElement('span');
-    labelElement.classList.add('data-label');
-    labelElement.textContent = label;
-
-    // Create the value element.
-    const valueElement = document.createElement('span');
-    valueElement.classList.add('data-value');
-    valueElement.textContent = value;
-
-    // Apply conditional formatting if textColor is provided.
-    if (textColor) {
-        valueElement.style.color = textColor;
-    }
-
-    // Append the label and value to the data box.
-    dataBox.appendChild(labelElement);
-    dataBox.appendChild(valueElement);
-
-    return dataBox;
-}
 
 
-
-
-export {updateDatesDisplay, getLatestLeaveDate, getTotalLeaveDays, alreadyPickedDates, createDashboard}
+export { updateDatesDisplay, getLatestLeaveDate, getTotalLeaveDays, alreadyPickedDates, createDashboard }

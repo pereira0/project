@@ -387,34 +387,39 @@ input[type="date"] {
 
 
 /* DASHBOARD STYLING */
+/* Dashboard Container */
 .dashboard {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    padding: 1rem;
-    background-color: #f9f9f9;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-}
-
-.data-box {
     display: flex;
     justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+/* Individual Boxes */
+.dashboard-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    padding: 0.5rem;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-family: Arial, sans-serif;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    transition: transform 0.2s ease-in-out;
 }
 
-.data-label {
+/* Labels */
+.dashboard-label {
+    font-size: 1rem;
     font-weight: bold;
-    color: #555;
+    margin-bottom: 0.5rem;
+    color: #333;
 }
 
-.data-value {
+/* Values */
+.dashboard-value {
+    font-size: 1.5rem;
     font-weight: bold;
+    color: #000;
 }
-
-
