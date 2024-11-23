@@ -25,6 +25,7 @@ export function thirdStep(data_storage) {
     // populate appDiv
     const topContentDiv = document.getElementById('top-content')
     const contentDiv = document.getElementById('content')
+    console.log('first step: ', data_storage)
     choicesCreation(contentDiv, topContentDiv, data_storage);
 
     // get return button
@@ -109,7 +110,7 @@ function populateCalendarAndData(containerDiv, optionID, data_storage, topConten
     }
 }
 
-// for the 150 and 180 ddays logic
+// for the 150 and 180 days logic
 function datePickerContainer(containerDiv, optionID, data_storage, topContentDiv) {
     // get duration of leave and minimum dad leave
     let duration = 0;
@@ -179,47 +180,34 @@ function selectionLogic(data_storage, duration, dadMin, containerDiv) {
     const lineDiv = document.createElement('div');
     lineDiv.classList.add('leave-period-line');
 
-    // HELPER INFORMATION
+    // // HELPER INFORMATION
     const infoDiv = document.getElementById('bottom-content');
-    infoDiv.innerHTML = data.htmlDisplay;
+    // infoDiv.innerHTML = data.htmlDisplay;
+    console.log(data_storage)
 
     // Create the new line content using the addNewLine function (if you need more complex lines).
-    addNewLine(data, infoDiv, containerDiv);
-
-    // lineDiv.appendChild(newLine);
+    addNewLine(data, infoDiv, containerDiv, data_storage);
 
     // Return the completed `lineDiv` containing both the static text and dynamic line.
     containerDiv.appendChild(infoDiv);
 
-
-
-    // Example container to replace
-    // const newData = dataHandling(data_storage, duration, dadMin);
     const dashboardContainer = document.getElementById('dashboard-container');
     // Create and replace the dashboard
-    createDashboard(dashboardContainer, data);
+    dashboardContainer.appendChild(createDashboard(data));
 }
 
 // function to create and return the leave period line.
-function addNewLine(data, infoDiv, containerDiv) {
-    // helper div to debug
-    // const infoDiv = document.getElementById('bottom-content');
-
-
+function addNewLine(data, infoDiv, containerDiv, data_storage) {
+    console.log("-3: ", data_storage)
     // DATA START
     // get necessary values
     const startDate = data.firstDayNextLeave
     // construct options array
     const optionsArr = createOptionsArray(data)
-    // const maxEndDate = data.maxDate
-    // const daysLeftToPick = data.daysBetweenMaxDateLatestDate
-    // const duration = data.duration
-    // const dadMin = data.dadMin
-    // const durationWithoutInitial = data.durationWithoutInitial
-
-
 
     // VISUAL ELEMENTS
+    // get dashboard line
+    const dashboardContainer = document.getElementById('dashboard-container');
     // create lineDiv
     const lineDiv = document.createElement('div')
     // initialize newLine div
@@ -250,15 +238,22 @@ function addNewLine(data, infoDiv, containerDiv) {
     const addButton = document.createElement('button');
     addButton.id = 'adicionar-linha'
     addButton.textContent = '+'
+    addButton.disabled = true;
 
 
     // FUNCTIONALITY
     // Update dates dynamically
     durationSelect.addEventListener('change', () => {
         const selectedDuration = parseInt(durationSelect.value, 10);
+        if (selectedDuration > 0) {
+            addButton.disabled = false;
+        };
         updateDatesDisplay(startDate, selectedDuration, datesDisplay);
     });
 
+    console.log("-2: ", data_storage)
+
+    // Add line button
     addButton.addEventListener('click', () => {
         // get duration and person
         const selectedDuration = parseInt(durationSelect.value, 10);
@@ -267,11 +262,10 @@ function addNewLine(data, infoDiv, containerDiv) {
         // update data
         data.daysPicked = selectedDuration;
         data.person = selectedPerson;
-        console.log(data.daysPicked, " - ", data.person)
         data = dataHandling(null, null, null, data);
 
-        // update the info helper text
-        infoDiv.innerHTML = data.htmlDisplay;
+        // // update the info helper text
+        // infoDiv.innerHTML = data.htmlDisplay;
 
         // disable the dropdowns for the current display
         durationSelect.disabled = true;
@@ -279,27 +273,42 @@ function addNewLine(data, infoDiv, containerDiv) {
 
         // if dad min is not achieved and last date is not reached -> create new line with the updated information
         if (data.totalTimeCondition === false) {
-            addNewLine(data, infoDiv, lineDiv); 
-            addButton.hidden = true;           
+            addNewLine(data, infoDiv, lineDiv, data_storage); 
+            addButton.hidden = true;
+            // update dashboard container
+            dashboardContainer.innerHTML = ``;
+            dashboardContainer.appendChild(createDashboard(data));
         }
         // if last date is achieved but dad doesn't have his min -> error, will have to restart
         else if (data.dadCondition === false) {
-            windows.alert('Error - dad condition not met and all days picked')
+            alert('Error - dad condition not met and all days picked')
+            addButton.hidden = true; 
+            dashboardContainer.hidden = true;
 
         }
         // if both conditions are true -> generate calendar and move on
         else if (data.dadCondition === true) {
-            windows.alert('ALL CORRECT!')
+            addButton.hidden = true; 
+            // update dashboard container
+            dashboardContainer.innerHTML = ``;
+            dashboardContainer.appendChild(createDashboard(data));
+            // continue button
+            console.log("-1 ", data_storage)
+            const continueButton = createCalendarButton(data, data_storage)
+            dashboardContainer.appendChild(continueButton)
+
 
         }
         else if (data.daysLeft < 0) {
-            windows.alert('went overboard again')
+            alert('went overboard again')
+            addButton.hidden = true; 
+            dashboardContainer.hidden = true;
 
         }
     });
 
 
-    // BACK TO VISUALS
+    // VISUALS
     // Append elements to the line
     newLine.appendChild(personSelect);
     newLine.appendChild(midText);
@@ -311,68 +320,6 @@ function addNewLine(data, infoDiv, containerDiv) {
     lineDiv.appendChild(newLine);
     containerDiv.appendChild(lineDiv);
 }
-
-
-// function dataCleanupValidation(data_storage = null, duration = null, dadMin = null, dataCleaning = {}) {
-//     const ONE_DAY_MS = 24 * 60 * 60 * 1000; // Milliseconds in one day
-
-//     // Initialize dataCleaning if it is empty and other required parameters are provided
-//     if (Object.keys(dataCleaning).length === 0 && data_storage && duration && dadMin) {
-//         const babyBirthDate = new Date(data_storage.babyBirthDate);
-//         const maxDate = calculateEndDate(babyBirthDate, duration)
-
-//         // Populate dataCleaning object
-//         dataCleaning = {
-//             babyBirthDate,
-//             duration,
-//             durationWithoutInitial: duration - 42,
-//             maxDate,
-//             momLeave: data_storage.secondStep.momLeave || [],
-//             dadLeave: data_storage.secondStep.dadLeave || [],
-//             momLeaveNew: data_storage.thirdStep.momLeave || [],
-//             dadLeaveNew: data_storage.thirdStep.dadLeave || [],
-//             dadMin,
-//         };
-//     }
-
-//     // Always calculate these fields
-//     const dadLeaveNewQt = getTotalLeaveDays(dataCleaning.dadLeaveNew); // Total dad leave in new section
-//     const latestDate = getLatestLeaveDate(dataCleaning.momLeave, dataCleaning.dadLeave, dataCleaning.momLeaveNew, dataCleaning.dadLeaveNew); // Latest leave date
-
-//     // Update calculated fields
-//     dataCleaning = {
-//         ...dataCleaning,
-//         dadLeaveNewQt,
-//         dadDaysRemainingForMin: Math.max(dataCleaning.dadMin - dadLeaveNewQt, 0),
-//         latestDate,
-//         nextDate: calculateEndDate(dataCleaning.latestDate, 1),
-//         daysBetweenMaxDateLatestDate: getDaysBetweenDates(latestDate, dataCleaning.maxDate),
-
-//         // two conditions to secure
-//         dadMinAchieved: dataCleaning.dadLeaveNewQt >= dataCleaning.dadMin,
-//         maxDateAchieved: dataCleaning.daysBetweenMaxDateLatestDate <= 1,
-//     };
-
-//     // Generate helper text
-//     dataCleaning.htmlDisplay = createHelperText(dataCleaning);
-
-//     return dataCleaning;
-// }
-
-// Helper to create helper text
-// function createHelperText(dataCleaning) {
-//     const textNode = document.createElement("div");
-//     textNode.innerHTML = `
-//         <p>Baby was born on ${formatDate(dataCleaning.babyBirthDate)} and the max date that can be picked is ${formatDate(dataCleaning.maxDate)}, which should be ${dataCleaning.duration} days after the birthday.</p>
-//         <p>Latest day of the leave is ${formatDate(dataCleaning.latestDate)} and they still have to decide on ${dataCleaning.daysBetweenMaxDateLatestDate} days of leave.</p>
-//         <p>Dad already took ${dataCleaning.dadLeaveNewQt} days, still has to take ${dataCleaning.dadDaysRemainingForMin} days.</p>
-//         <p>Dad condition is met? ${dataCleaning.dadMinAchieved}. Max date achieved? ${dataCleaning.maxDateAchieved}.</p>
-//     `;
-//     return textNode;
-// }
-
-
-
 /**
  * Handles all data processing for the leave picker.
  * 
@@ -504,11 +451,8 @@ function dataHandling(data_storage = null, duration = null, dadMin = null, dataC
             <br>- Total days picked? ${dataCleaning.totalTimeCondition}
         </p>
     `
-    console.log(dataCleaning)
     return dataCleaning
 }
-
-
 
 // helper function to create options array
 function createOptionsArray(data) {
@@ -517,20 +461,76 @@ function createOptionsArray(data) {
     const durationWithoutInitial = data.durationWithoutInitial;
     const duration = data.totalLeave;
     const dadMin = data.dadMin;
+    const momMax = duration - dadMin - 42
+    
+    // help function
+    // creates an array with all possible values until a max value
+    function createArray(max) {
+        const standarArr = [15,30,60,90,120]
+        let finalArr = ['']
+
+        for (let index = 0; index < standarArr.length; index++) {
+            const element = standarArr[index];
+
+            if (element<max) {
+                finalArr.push(element)
+            }  
+        }
+
+        finalArr.push(max)
+
+        return finalArr
+    }
+
 
     // construct the options
     let optionsArr = []
-    // if there are less than 30 days to pick, then there's only the option of picking the full amount of days left, because the person going after can't pick less than 15
+    
+    // if there are less than 30 days left, then need to take full time
     if (daysLeftToPick < 30) {
         optionsArr = ['', daysLeftToPick];
     }
     // if this is the first time picking the leave, give the last option of the mom taking the first period all at once and the dad taking the second period all at once
     else if (daysLeftToPick === durationWithoutInitial) {
-        optionsArr = ['', 15, 30, 60, 90, duration - dadMin - 42];
+        optionsArr = createArray(duration - dadMin - 42)
     }
     else {
-        optionsArr = ['', 15, 30, 60, 90, 120];
+        optionsArr = createArray(daysLeftToPick)
     }
 
     return optionsArr
+}
+
+function createCalendarButton(data, data_storage) {
+    // create add button
+    const createCalendarButton = document.createElement('button');
+    createCalendarButton.id = 'criar-calendario'
+    createCalendarButton.textContent = 'Atualizar calendário'
+
+    console.log("0 ", data)
+    
+    // get vars from dictionary
+    const momLastLeave = data.momLastLeave
+    const dadLastLeave = data.dadLastLeave
+    const momNewLeave = data.momNewLeave
+    const dadNewLeave = data.dadNewLeave
+    const momTotalLeave = momLastLeave.push(momNewLeave)
+    const dadTotalLeave = dadLastLeave.push(dadNewLeave)
+    // atualizar dados gerais
+    data_storage.thirdStep.momLeave = momTotalLeave
+    data_storage.thirdStep.dadLeave = dadTotalLeave
+    console.log(data_storage)
+    
+    const newCalendar = generateCalendar(data_storage.babyBirthDateIn, data_storage.thirdStep)
+
+    const topContentDiv = document.getElementById('top-content')
+    const contentDiv = document.getElementById('content-general')
+
+    createCalendarButton.addEventListener('click', () => {
+        topContentDiv.innerHTML = `<h2>Calendário atualizado</h2>`
+        contentDiv.innerHTML = ``
+        contentDiv.appendChild(newCalendar)
+    })
+
+    return createCalendarButton
 }

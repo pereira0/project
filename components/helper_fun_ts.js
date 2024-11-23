@@ -86,9 +86,12 @@ function alreadyPickedDates(dataStorageStep) {
 
 
 // create dashboard
-function createDashboard(containerDiv, data) {
+function createDashboard(data) {
     // Destructure the data object for easier access.
-    const { totalLeave, daysLeft, dadMin, dadLeaveNewTime } = data;
+    const totalLeave = data.totalLeave;
+    const daysLeft = data.daysLeft;
+    const dadMin = data.dadMin;
+    const dadLeaveNewTime = data.dadLeaveNewTime;
 
     // Create the dashboard container
     const dashboardDiv = document.createElement('div');
@@ -131,10 +134,12 @@ function createDashboard(containerDiv, data) {
     dashboardDiv.appendChild(dadMinBox);
     dashboardDiv.appendChild(dadLeaveBox);
 
-    // Replace the existing container with the new dashboard.
-    if (containerDiv && containerDiv.parentNode) {
-        containerDiv.parentNode.replaceChild(dashboardDiv, containerDiv);
-    }
+    return dashboardDiv;
+
+    // // Replace the existing container with the new dashboard.
+    // if (containerDiv && containerDiv.parentNode) {
+    //     containerDiv.parentNode.replaceChild(dashboardDiv, containerDiv);
+    // }
 }
 
 

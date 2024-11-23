@@ -56,6 +56,7 @@ function calculateEndDate(startDate, duration) {
 // GENERATE CALENDAR DIV
 // Function to generate and display the calendar
 function generateCalendar(babyBirthDateIn, data_storage_step) {
+    console.log(data_storage_step)
     // get variables
     const babyBirthDate = babyBirthDateIn;
     const momsLeave = data_storage_step.momLeave;
@@ -207,29 +208,54 @@ function addLegend(calendarDiv) {
 };
 
 // Function to find the latest date from both momLeave and dadLeave
+// function findLatestDate(momsLeave, dadsLeave) {
+//     // Initialize a variable to hold the latest date
+//     let latestDate = new Date(0);  // Start with the earliest possible date (Unix epoch)
+
+//     // Loop through mom's leave periods and check the end date
+//     momsLeave.forEach(leavePeriod => {
+//         const endDate = new Date(leavePeriod[1]);
+//         if (endDate > latestDate) {
+//             latestDate = endDate;
+//         }
+//     });
+
+//     // Loop through dad's leave periods and check the end date
+//     dadsLeave.forEach(leavePeriod => {
+//         const endDate = new Date(leavePeriod[1]);
+//         if (endDate > latestDate) {
+//             latestDate = endDate;
+//         }
+//     });
+
+//     // Return the latest date found
+//     return latestDate;
+// };
+
 function findLatestDate(momsLeave, dadsLeave) {
     // Initialize a variable to hold the latest date
-    let latestDate = new Date(0);  // Start with the earliest possible date (Unix epoch)
+    let latestDate = new Date(0); // Start with the earliest possible date (Unix epoch)
 
     // Loop through mom's leave periods and check the end date
-    momsLeave.forEach(leavePeriod => {
-        const endDate = new Date(leavePeriod[1]);
+    for (let i = 0; i < momsLeave.length; i++) {
+        const endDate = new Date(momsLeave[i][1]);
         if (endDate > latestDate) {
             latestDate = endDate;
         }
-    });
+    }
 
     // Loop through dad's leave periods and check the end date
-    dadsLeave.forEach(leavePeriod => {
-        const endDate = new Date(leavePeriod[1]);
+    for (let i = 0; i < dadsLeave.length; i++) {
+        const endDate = new Date(dadsLeave[i][1]);
         if (endDate > latestDate) {
             latestDate = endDate;
         }
-    });
+    }
 
     // Return the latest date found
     return latestDate;
-};
+}
+
 
 
 // OPTIONS FOR INITIAL LEAVE

@@ -52,6 +52,14 @@ button:hover {
     background-color: var(--color-dark);
 }
 
+/* Style for disabled button */
+button:disabled {
+    background-color: grey;
+    color: #ccc; /* Lighter text color for disabled state */
+    cursor: not-allowed; /* Change cursor to indicate disabled */
+    opacity: 0.6; /* Optional: Add slight transparency */
+}
+
 img {
     max-width: 100%;
     height: auto;
@@ -409,6 +417,10 @@ input[type="date"] {
     transition: transform 0.2s ease-in-out;
 }
 
+.dashboard-box.highlight {
+    background-color: rgba(76, 175, 80, 0.2);
+}
+
 /* Labels */
 .dashboard-label {
     font-size: 1rem;
@@ -423,3 +435,5 @@ input[type="date"] {
     font-weight: bold;
     color: #000;
 }
+
+
