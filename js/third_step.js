@@ -1,8 +1,7 @@
-import { formatDate, getDaysBetweenDates, options, calculateEndDate } from '../components/reusable.js'
-import { generateCalendar } from '../components/reusable.js';
-import { helpThirdStep } from '../components/help_text.js';
 import { secondStep } from './second_step.js';
-import { updateDatesDisplay, getLatestLeaveDate, getTotalLeaveDays, alreadyPickedDates } from '../components/helper_fun_ts.js';
+import { helpThirdStep } from '../components/help_text.js';
+import { formatDate, getDaysBetweenDates, options, calculateEndDate, generateCalendar } from '../components/reusable.js'
+import { updateDatesDisplay, getLatestLeaveDate, getTotalLeaveDays, alreadyPickedDates, createDashboard} from '../components/helper_fun_ts.js';
 
 // Function to set up the form after selecting the baby's birth date
 export function thirdStep(data_storage) {
@@ -19,6 +18,7 @@ export function thirdStep(data_storage) {
             <div id='top-content'></div>
             <div id='content'></div>
             <div id='bottom-content'></div>
+            <div id='dashboard-container'></div>
         </div>
     `;
 
@@ -127,7 +127,6 @@ function datePickerContainer(containerDiv, optionID, data_storage, topContentDiv
     }
 
     // restart the current div or replace with empty
-    console.log(data_storage)
     topContentDiv.innerHTML = `
         <h2>É preciso escolher como vai acontecer o resto da licença</h2>
         <p>O bebé nasceu ou vai nascer em ${formatDate(data_storage.babyBirthDate)}</p>
@@ -191,53 +190,50 @@ function selectionLogic(data_storage, duration, dadMin, containerDiv) {
     
     // Return the completed `lineDiv` containing both the static text and dynamic line.
     containerDiv.appendChild(infoDiv);
+
+    // Example container to replace
+    const newData = dataHandling(data_storage, duration, dadMin);
+    const dashboardContainer = document.getElementById('dashboard-container');
+    // Create and replace the dashboard
+    createDashboard(dashboardContainer, newData);
 }
 
 // function to create and return the leave period line.
 function addNewLine(data, infoDiv, containerDiv) {
+
+
+    // DATA START
     // get necessary values
     const startDate = data.nextDate
-    const maxEndDate = data.maxDate
-    const daysLeftToPick = data.daysBetweenMaxDateLatestDate
-    const duration = data.duration
-    const dadMin = data.dadMin
-    const durationWithoutInitial = data.durationWithoutInitial
+    // construct options array
+    const optionsArr = createOptionsArray(data)
+    // const maxEndDate = data.maxDate
+    // const daysLeftToPick = data.daysBetweenMaxDateLatestDate
+    // const duration = data.duration
+    // const dadMin = data.dadMin
+    // const durationWithoutInitial = data.durationWithoutInitial
 
+
+
+    // VISUAL ELEMENTS
     // create lineDiv
     const lineDiv = document.createElement('div')
-
     // initialize newLine div
     const newLine = document.createElement('div');
     newLine.classList.add('leave-period-line');
-
     // Dropdown for Mom/Dad
     const personSelect = document.createElement('select');
     personSelect.innerHTML = `
         <option value="mom">A mãe</option>
         <option value="dad">O pai</option>
     `;
-
     // Text between dropdowns
     const midText = document.createElement('span');
     midText.textContent = 'vai ficar de licença durante';
-
-    // construct the options
-    let optionsArr = []
-    // if there are less than 30 days to pick, then there's only the option of picking the full amount of days left, because the person going after can't pick less than 15
-    if (daysLeftToPick < 30) {
-        optionsArr = ['', daysLeftToPick];
-    } 
-    // if this is the first time picking the leave, give the last option of the mom taking the first period all at once and the dad taking the second period all at once
-    else if (daysLeftToPick === durationWithoutInitial) {
-        optionsArr = ['', 15, 30, 60, 90, duration - dadMin - 42];
-    } 
-    else {
-        optionsArr = ['', 15, 30, 60, 90, 120];
-    }
- 
     // Dropdown for duration
     const durationSelect = document.createElement('select');
-
+    // Display calculated dates
+    const datesDisplay = document.createElement('span');
     // Populate duration dropdown
     optionsArr.forEach((option) => {
         const optionElement = document.createElement('option'); // create element
@@ -246,9 +242,7 @@ function addNewLine(data, infoDiv, containerDiv) {
         durationSelect.appendChild(optionElement); // append to element
     });
 
-    // Display calculated dates
-    const datesDisplay = document.createElement('span');
-
+    // FUNCTIONALITY
     // Update dates dynamically
     durationSelect.addEventListener('change', () => {
         const selectedDuration = parseInt(durationSelect.value, 10);
@@ -281,21 +275,21 @@ function addNewLine(data, infoDiv, containerDiv) {
         } 
     });
 
+    
+    // BACK TO VISUALS
     // Append elements to the line
     newLine.appendChild(personSelect);
     newLine.appendChild(midText);
     newLine.appendChild(durationSelect);
     newLine.appendChild(datesDisplay);
 
-    // Return the newly created line and updated data (if needed).
+    // Return the newly created line
     lineDiv.appendChild(newLine);
     containerDiv.appendChild(lineDiv);
 }
 
 
 function dataCleanupValidation(data_storage = null, duration = null, dadMin = null, dataCleaning = {}) {
-    console.log("Initial dataCleaning:", dataCleaning);
-
     const ONE_DAY_MS = 24 * 60 * 60 * 1000; // Milliseconds in one day
 
     // Initialize dataCleaning if it is empty and other required parameters are provided
@@ -338,9 +332,70 @@ function dataCleanupValidation(data_storage = null, duration = null, dadMin = nu
     // Generate helper text
     dataCleaning.htmlDisplay = createHelperText(dataCleaning);
 
-    console.log("Updated dataCleaning:", dataCleaning);
-
     return dataCleaning;
+}
+
+
+/// NEW VERSION OF THE DATA CLEANUP AND VALIDATION
+function dataHandling(data_storage = null, duration = null, dadMin = null, dataCleaning = {}) {
+    // Initialize dataCleaning if it is empty and other required parameters are provided
+    if (Object.keys(dataCleaning).length === 0 && data_storage && duration && dadMin) {
+        const babyBirthDate = new Date(data_storage.babyBirthDate);
+        const maxDate = calculateEndDate(babyBirthDate, duration);
+        // const lastDayLastLeave = getLatestLeaveDate(data_storage.secondStep.momLeave, data_storage.secondStep.dadLeave);
+
+        // Populate dataCleaning object
+        dataCleaning = {
+            // THIS STAYS THE SAME
+            babyBirthDate, 
+            maxDate,
+            momLastLeave: data_storage.secondStep.momLeave,
+            dadLastLeave: data_storage.secondStep.dadLeave,
+            totalLeave: duration, 
+            // UPDATES OUTSIDE FUNCTION
+            daysPicked: 0,
+            person: '',
+            // NEEDS UPDATING INSIDE FUNCTION
+            momNewLeave: [],
+            dadNewLeave: [], 
+            dadLeaveNewTime: 0,
+            daysLeft: duration - 42,
+        };
+    }  
+    
+    // update dates on new leave
+    if (dataCleaning.personPicked === 'mom') {
+        dataCleaning.momNewLeave.push([dataCleaning.firstDayNextLeave, calculateEndDate(dataCleaning.firstDayNextLeave, daysPicked)])
+    } 
+    else if(dataCleaning.personPicked === 'dad') {
+        dataCleaning.dadNewLeave.push([dataCleaning.firstDayNextLeave, calculateEndDate(dataCleaning.firstDayNextLeave, daysPicked)])
+    }
+
+    // update rest of data
+    dataCleaning = {
+        ...dataCleaning,
+        // ALWAYS UPDATES BASED ON DATA
+        lastDaysPicked: dataCleaning.lastDaysPicked,
+        dadLeaveNewTime: dataCleaning.dadLeaveNewTime + dataCleaning.daysPicked,
+    
+        // Step 1: Calculate lastDayLastLeave
+        lastDayLastLeave: getLatestLeaveDate(
+            dataCleaning.momLastLeave,
+            dataCleaning.dadLastLeave,
+            dataCleaning.momNewLeave,
+            dataCleaning.dadNewLeave
+        ),
+    };
+    
+    // Step 2: Use lastDayLastLeave to calculate firstDayNextLeave
+    dataCleaning = {
+        ...dataCleaning,
+        firstDayNextLeave: calculateEndDate(dataCleaning.lastDayLastLeave, 1),
+        daysLeft: dataCleaning.daysLeft - dataCleaning.lastDaysPicked,
+    };
+
+    console.log(dataCleaning)
+    return dataCleaning
 }
 
 // Helper to create helper text
@@ -353,4 +408,28 @@ function createHelperText(dataCleaning) {
         <p>Dad condition is met? ${dataCleaning.dadMinAchieved}. Max date achieved? ${dataCleaning.maxDateAchieved}.</p>
     `;
     return textNode;
+}
+
+// helper function to create options array
+function createOptionsArray(data) {
+    const daysLeftToPick = data.daysLeftToPick;
+    const durationWithoutInitial = data.durationWithoutInitial;
+    const duration = data.duration;
+    const dadMin = data.dadMin;
+
+    // construct the options
+    let optionsArr = []
+    // if there are less than 30 days to pick, then there's only the option of picking the full amount of days left, because the person going after can't pick less than 15
+    if (daysLeftToPick < 30) {
+        optionsArr = ['', daysLeftToPick];
+    } 
+    // if this is the first time picking the leave, give the last option of the mom taking the first period all at once and the dad taking the second period all at once
+    else if (daysLeftToPick === durationWithoutInitial) {
+        optionsArr = ['', 15, 30, 60, 90, duration - dadMin - 42];
+    } 
+    else {
+        optionsArr = ['', 15, 30, 60, 90, 120];
+    }
+
+    return optionsArr
 }

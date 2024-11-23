@@ -1,3 +1,5 @@
+import { formatDate, getDaysBetweenDates, options, calculateEndDate } from '../components/reusable.js'
+
 // Update dates display
 function updateDatesDisplay(startDate, duration, displayElement) {
     const start = new Date(startDate);
@@ -82,6 +84,85 @@ function alreadyPickedDates(dataStorageStep) {
     return mergedLeave
 }
 
+/**
+ * Creates a dashboard-style div to display data and replaces the provided container with it.
+ * @param {HTMLElement} containerDiv - The div to be replaced with the new dashboard div.
+ * @param {Object} data - The data to display.
+ * @param {number} data.totalLeave - Total initial leave days.
+ * @param {number} data.daysLeft - Remaining leave days to be chosen.
+ * @param {number} data.dadMin - Minimum leave days required for the father.
+ * @param {number} data.dadLeaveNewTime - Leave days the father has already chosen.
+ */
+function createDashboard(containerDiv, data) {
+    // Destructure the data object for easier access.
+    const totalLeave = data.totalLeave;
+    const daysLeft = data.daysLeft;
+    const dadMin = data.dadMin;
+    const dadLeaveNewTime = data.dadLeaveNewTime;
+
+    // Create the dashboard container.
+    const dashboardDiv = document.createElement('div');
+    dashboardDiv.classList.add('dashboard');
+
+    // Create individual data boxes.
+    const totalLeaveBox = createDataBox('Licença inicial total', `${totalLeave} dias`);
+    const daysLeftBox = createDataBox('Dias por escolher', `${daysLeft} dias`);
+    const dadMinBox = createDataBox('Mínimo do pai', `${dadMin} dias`);
+
+    // Conditionally formatted box for dad's leave time.
+    const dadLeaveNewTimeBox = createDataBox(
+        'Dias do pai já escolhidos',
+        `${dadLeaveNewTime} dias`,
+        dadLeaveNewTime >= dadMin ? 'green' : 'red'
+    );
+
+    // Append all data boxes to the dashboard.
+    dashboardDiv.appendChild(totalLeaveBox);
+    dashboardDiv.appendChild(daysLeftBox);
+    dashboardDiv.appendChild(dadMinBox);
+    dashboardDiv.appendChild(dadLeaveNewTimeBox);
+
+    // Replace the existing container with the new dashboard.
+    if (containerDiv && containerDiv.parentNode) {
+        containerDiv.parentNode.replaceChild(dashboardDiv, containerDiv);
+    }
+}
+
+/**
+ * Helper function to create a styled data box.
+ * @param {string} label - The label for the data box.
+ * @param {string} value - The value to display in the data box.
+ * @param {string} [textColor] - Optional text color for the value (e.g., "green" or "red").
+ * @returns {HTMLElement} - The created data box element.
+ */
+function createDataBox(label, value, textColor) {
+    // Create the container for the data box.
+    const dataBox = document.createElement('div');
+    dataBox.classList.add('data-box');
+
+    // Create the label element.
+    const labelElement = document.createElement('span');
+    labelElement.classList.add('data-label');
+    labelElement.textContent = label;
+
+    // Create the value element.
+    const valueElement = document.createElement('span');
+    valueElement.classList.add('data-value');
+    valueElement.textContent = value;
+
+    // Apply conditional formatting if textColor is provided.
+    if (textColor) {
+        valueElement.style.color = textColor;
+    }
+
+    // Append the label and value to the data box.
+    dataBox.appendChild(labelElement);
+    dataBox.appendChild(valueElement);
+
+    return dataBox;
+}
 
 
-export {updateDatesDisplay, getLatestLeaveDate, getTotalLeaveDays, alreadyPickedDates}
+
+
+export {updateDatesDisplay, getLatestLeaveDate, getTotalLeaveDays, alreadyPickedDates, createDashboard}
