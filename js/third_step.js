@@ -1,77 +1,58 @@
-import { formatDate, getDaysBetweenDates } from '../components/reusable.js'
+import { formatDate, getDaysBetweenDates, options, calculateEndDate } from '../components/reusable.js'
 import { generateCalendar } from '../components/reusable.js';
 import { helpThirdStep } from '../components/help_text.js';
 import { secondStep } from './second_step.js';
+import { updateDatesDisplay, getLatestLeaveDate, getTotalLeaveDays, alreadyPickedDates } from '../components/helper_fun_ts.js';
 
 // Function to set up the form after selecting the baby's birth date
 export function thirdStep(data_storage) {
-    const returnButton = document.getElementById('return-btn') // get original button
-
-    // get data from storage
-    const babyBirthDate = data_storage.secondStep.babyBirthDate;
-    let momLeave = data_storage.secondStep.momLeave;
-    let dadLeave = data_storage.secondStep.dadLeave;
+    // populate help button for this page
+    const helpContent = document.getElementById('help-content-sp');
+    helpContent.innerHTML = helpThirdStep;
 
     // get app div
     const appDiv = document.getElementById('app');
 
-    // populate help button for this page
-    const helpContent = document.getElementById('help-content-sp');
-    helpContent.innerHTML = helpThirdStep;
-    
     // start content
     appDiv.innerHTML = `
-        <h1>Parte 2 de 3 - Segunda parte da licença inicial</h1>
-        <div id="calendar"></div>
-        <div id="choices-li"></div>
-        <button id="return-btn" class="return-button">&#8592;</button>
+        <div id='content-general'>
+            <div id='top-content'></div>
+            <div id='content'></div>
+            <div id='bottom-content'></div>
+        </div>
     `;
 
-    generateOptions(babyBirthDate, momLeave, dadLeave);  // Call the new function to generate the options
+    // populate appDiv
+    const topContentDiv = document.getElementById('top-content')
+    const contentDiv = document.getElementById('content')
+    choicesCreation(contentDiv, topContentDiv, data_storage);
 
-    returnButton.addEventListener('click', () => {
-        const calendarElement = document.getElementById('calendar');
-        const choicesElement = document.getElementById('choices-li');
-    
-        // Check if calendar has content
-        if (calendarElement && calendarElement.innerHTML.trim() !== '') {
-            console.log('Calendar has content, moving to generate options...');
-            calendarElement.innerHTML = ''
-            generateOptions(babyBirthDate, momLeave, dadLeave);  // Call the new function to generate the options
-        } 
-        // Check if choices-li has content
-        else if (choicesElement && choicesElement.innerHTML.trim() !== '') {
-            console.log('Choices have content, moving to the second step...');
-            secondStep(data_storage); // Proceed to second step
-        } 
-        // Handle case where neither has content
-        else {
-            console.error('Neither calendar nor choices have valid content.');
+    // get return button
+    const returnButton = document.getElementById('return-btn');
+    returnButton.hidden = false;
+
+    // return button functionality
+    document.getElementById('return-btn').addEventListener('click', () => {
+        const calendarDiv = document.getElementById('calendar')
+        if (calendarDiv) {
+            choicesCreation('content', data_storage);
+        } else {
+            secondStep(data_storage)
         }
     });
-    
 }
 
-// Function to generate the 3 options for the user to choose from
-function generateOptions(babyBirthDate, momLeave, dadLeave) {
-    const optionsDiv = document.getElementById('choices-li')
+// creates all 5 options
+function choicesCreation(contentDiv, topContentDiv, data_storage) {
+    // change title
+    topContentDiv.innerHTML = `<h2>O resto da licença inicial</h2>`
 
-    optionsDiv.innerHTML = `
-        <p>A segunda parte da licença inicial é um bocado mais complexa. Basicamente existem 5 hipóteses:</p>
-        `;
-
+    // create the options selection
     const optionsSection = document.createElement('div');
     optionsSection.classList.add('second-step-options-container'); 
-      
+    optionsSection.id = 'options-section'
 
-    const options = [
-        { id: 'option-1', title: 'Opção 1', total: '120 dias', description: 'tirados inteiramente pela mãe.', price: '100% RR' },
-        { id: 'option-2', title: 'Opção 2', total: '150 dias', description: 'tirados inteiramente pela mãe.', price: '80% RR' },
-        { id: 'option-3', title: 'Opção 3', total: '150 dias partilhados', description: '120 (ou menos) são tirados pela mãe e 30 (ou mais) são tirados pelo pai (para além do período incial).', price: '100% RR' },
-        { id: 'option-4', title: 'Opção 4', total: '180 dias partilhados', description: '150 (ou menos) são tirados pela mãe e 30 (ou mais) são tirados pelo pai (para além do período incial).', price: '83% RR' },
-        { id: 'option-5', title: 'Opção 5', total: '180 dias partilhados', description: '120 (ou menos) são tirados pela mãe e 60 (ou mais) são tirados pelo pai (para além do período incial).', price: '90% RR' }
-    ];
-
+    // create options container and each level      
     options.forEach(option => {
         const optionDiv = document.createElement('div');
         optionDiv.classList.add('second-step-option'); 
@@ -83,268 +64,293 @@ function generateOptions(babyBirthDate, momLeave, dadLeave) {
             <button id="${option.id}">Escolher</button>
         `;
         optionsSection.appendChild(optionDiv);
+
     });
 
     // add to HTML    
-    optionsDiv.appendChild(optionsSection);
+    contentDiv.appendChild(optionsSection);
 
-    document.getElementById('option-1').addEventListener('click', () => {
-        momLeave = updateMomLeaveWith120Days(babyBirthDate, momLeave) // update mom array
-        removeOptionsContainer() // remove options container
-        generateCalendar(babyBirthDate, momLeave, dadLeave) // generate new calendar
-    });
-
-    document.getElementById('option-2').addEventListener('click', () => {
-        momLeave = updateMomLeaveWith150Days(babyBirthDate, momLeave) // update mom array
-        removeOptionsContainer() // remove options container
-        generateCalendar(babyBirthDate, momLeave, dadLeave) // generate new calendar
-    });
-
-    document.getElementById('option-3').addEventListener('click', () => {
-        removeOptionsContainer() // remove options container
-        const leavePeriodSelection = createLeavePeriodSelection(babyBirthDate) // Generate the calendar with selectors
-        appDiv.appendChild(leavePeriodSelection); // Append it to the appDiv or another container
-        addResetAndValidateButton(appDiv, babyBirthDate);
-    });
-
-}
-
-// Function to update the momLeave array when option of 120 days is chosen
-function updateMomLeaveWith120Days(babyBirthDate, momLeave) {
-    const startDate = new Date(babyBirthDate);
-    const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + 119); // Add 120 days
-
-    // Update the momLeave array
-    momLeave.length = 0; // Clear any existing entries
-    momLeave.push([startDate, endDate]);
-
-    return momLeave
-}
-
-// function to update the momLeave array when option of 150 days is chosen
-function updateMomLeaveWith150Days(babyBirthDate, momLeave) {
-    const startDate = new Date(babyBirthDate);
-    const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + 149); // Add 120 days
-
-    // Update the momLeave array
-    momLeave.length = 0; // Clear any existing entries
-    momLeave.push([startDate, endDate]);
-
-    return momLeave
-}
-
-// Function to create leave period selection
-function createLeavePeriodSelection(babyBirthDate, momLeave = [], dadLeave = [], duracao = 150, minPai = 30, minMae = 42) {
-    const container = document.getElementById('calendar')
-    container.innerHTML = `
-        <div if='leave-period-selection-container'>
-            <h2>Planeie os períodos de licença</h2>
-        
-        </div>`;
-
-    // Initialize start date
-    let currentStartDate = new Date(babyBirthDate);
-    const maxEndDate = new Date(currentStartDate);
-    maxEndDate.setDate(maxEndDate.getDate() + duracao - 1);
-
-    // Function to calculate and update mom/dad leave arrays
-    const updateLeaveData = (startDate, duration, person) => {
-        const endDate = calculateEndDate(startDate, duration);
-        if (person === 'mom') {
-            momLeave.push([startDate, endDate]);
-        } else {
-            dadLeave.push([startDate, endDate]);
-        }
-        return endDate;
-    };
-
-    // Function to validate if dad meets the minimum leave requirement
-    const validateDadLeave = () => {
-        const dadDays = dadLeave.reduce((total, range) => {
-            const [start, end] = range;
-            return total + getDaysBetweenDates(start, end);
-        }, 0);
-        return dadDays >= minPai;
-    };
-
-    // Function to add a new selection line
-    const addNewLine = (startDate) => {
-        const lineDiv = document.createElement('div');
-        lineDiv.classList.add('leave-period-line');
-
-        // Dropdown for Mom/Dad
-        const personSelect = document.createElement('select');
-        personSelect.innerHTML = `
-            <option value="mom">A mãe</option>
-            <option value="dad">O pai</option>
-        `;
-
-        // Text between dropdowns
-        const midText = document.createElement('span');
-        midText.textContent = 'vai ficar de licença durante';
-
-        // Dropdown for duration
-        const durationSelect = document.createElement('select');
-        const optionsArr = [15, 30, 60, 90, 120];
-        const daysLeft = getDaysBetweenDates(startDate, maxEndDate);
-
-        // Populate duration dropdown
-        optionsArr.forEach((option) => {
-            if (option <= daysLeft) {
-                const optionElement = document.createElement('option');
-                optionElement.value = option;
-                optionElement.textContent = `${option} dias`;
-                durationSelect.appendChild(optionElement);
-            }
+    // add functionality to the option buttons
+    options.forEach(option => {
+        document.getElementById(option.id).addEventListener('click', () => {
+            populateCalendarAndData(contentDiv, option.id, data_storage, topContentDiv)
         });
-
-        if (daysLeft >= 15 && !optionsArr.includes(daysLeft)) {
-            const customOption = document.createElement('option');
-            customOption.value = daysLeft;
-            customOption.textContent = `${daysLeft} dias`;
-            durationSelect.appendChild(customOption);
-        }
-
-        // Display calculated dates
-        const datesDisplay = document.createElement('span');
-        updateDatesDisplay(startDate, 15, datesDisplay); // Default to 15 days
-
-        // Update dates dynamically
-        durationSelect.addEventListener('change', () => {
-            const selectedDuration = parseInt(durationSelect.value, 10);
-            updateDatesDisplay(startDate, selectedDuration, datesDisplay);
-        });
-
-        // Add a button to add more lines
-        const addButton = document.createElement('button');
-        addButton.textContent = '+';
-        addButton.classList.add('add-line-button');
-
-        addButton.addEventListener('click', () => {
-            const selectedDuration = parseInt(durationSelect.value, 10);
-            const person = personSelect.value;
-
-            const endDate = updateLeaveData(startDate, selectedDuration, person);
-
-            if (endDate < maxEndDate) {
-                // Disable the current line inputs
-                addButton.disabled = true;
-                personSelect.disabled = true;
-                durationSelect.disabled = true;
-
-                // Start a new line
-                currentStartDate = new Date(endDate);
-                currentStartDate.setDate(currentStartDate.getDate() + 1); // Next day
-                addNewLine(currentStartDate);
-            } else {
-                alert('A data final ultrapassa o limite permitido de 150 dias.');
-            }
-        });
-
-        // Append elements to the line
-        lineDiv.appendChild(personSelect);
-        lineDiv.appendChild(midText);
-        lineDiv.appendChild(durationSelect);
-        lineDiv.appendChild(datesDisplay);
-        lineDiv.appendChild(addButton);
-
-        // Add line to the container
-        container.appendChild(lineDiv);
-    };
-
-    // Mom's mandatory leave (42 days)
-    const momInitialLeave = () => {
-        const lineDiv = document.createElement('div');
-        lineDiv.classList.add('leave-period-line');
-        const textoInside = document.createElement('span');
-        textoInside.textContent = `A mãe vai ficar de licença inicial obrigatória durante ${minMae} dias:`;
-
-        // Dates display
-        const datesDisplay = document.createElement('span');
-        updateDatesDisplay(currentStartDate, minMae, datesDisplay);
-
-        // Append elements to the line
-        lineDiv.appendChild(textoInside);
-        lineDiv.appendChild(datesDisplay);
-
-        // Add line to the container
-        container.appendChild(lineDiv);
-
-        const endDate = updateLeaveData(currentStartDate, minMae, 'mom');
-        currentStartDate = new Date(endDate);
-        currentStartDate.setDate(currentStartDate.getDate() + 1); // Next day
-    };
-
-    // Initialize with mom's leave and first line
-    momInitialLeave();
-    addNewLine(currentStartDate);
-
-    return container;
-}
-
-// Function to create and append a reset button
-function addResetAndValidateButton(container, babyBirthDate) {
-    // Add validation button
-    const validateButton = document.createElement('button');
-    validateButton.textContent = 'Validar Licença';
-    validateButton.classList.add('validate-button');
-    validateButton.addEventListener('click', () => {
-        if (!validateDadLeave()) {
-            alert('O pai não cumpre o mínimo de licença obrigatória.');
-        } else {
-            alert('Planeamento válido.');
-        }
     });
+}
 
-    // Add reset button
-    const resetButton = document.createElement('button');
-    resetButton.textContent = 'Recomeçar';
-    resetButton.classList.add('reset-button');  // You can add styling here if needed
+// logic for after an option is selected
+function populateCalendarAndData(containerDiv, optionID, data_storage, topContentDiv) {
+    // replace current div
+    topContentDiv.innerHTML = `<h2>Selecionado</h2>`
 
-    // Button listener to reset and remove the section
-    resetButton.addEventListener('click', () => {
-        // Remove the leave period selection container
-        const selectionsContainer = document.getElementById('leave-period-selection-container');
-        if (selectionsContainer) {
-            selectionsContainer.remove(); // Removes the element from the DOM
-            resetButton.remove(); // Removes the element from the DOM
-            validateButton.remove(); // Removes the element from the DOM
-            
-            // RESTART PROCESS
-            // Generate the calendar with selectors
-            const leavePeriodSelection = createLeavePeriodSelection(babyBirthDate);
-            // Append it to the appDiv or another container
-            container.appendChild(leavePeriodSelection);
-            addResetAndValidateButton(container, babyBirthDate);
+    // check which button was clicked 
+    // logic for options 1 and 2
+    if (optionID === 'option-1' || optionID === 'option-2') {
+        // get duration of leave
+        let duration = 0
+        if (optionID === 'option-1') {
+            duration = 120;            
         }
-    });
+        else if (optionID === 'option-2') {
+            duration = 150;
+        }
+        // populate mom & dad leave leave for the first two options
+        data_storage.thirdStep.dadLeave = data_storage.secondStep.dadLeave
+        data_storage.thirdStep.momLeave = [[new Date(data_storage.babyBirthDate), calculateEndDate(data_storage.babyBirthDate, duration)]]
 
-    // Append the reset button to the container
-    container.appendChild(validateButton);
-    container.appendChild(resetButton);
+        // show the calendar for the first two options
+        const calendarThirdStep = generateCalendar(data_storage.babyBirthDate, data_storage.thirdStep) // generate calendar
+        containerDiv.appendChild(calendarThirdStep)
+    } 
+
+    // logic for options 3, 4 or 5
+    else if (optionID === 'option-3' || optionID === 'option-4' || optionID === 'option-5') {
+        datePickerContainer(containerDiv, optionID, data_storage, topContentDiv)
+    }
 }
 
-// Helper: Update dates display
-function updateDatesDisplay(startDate, duration, displayElement) {
-    const start = new Date(startDate);
-    const end = calculateEndDate(start, duration);
-    displayElement.textContent = `: ${formatDate(start)} a ${formatDate(end)}`;
-}
-
-// Helper: Calculate end date based on duration
-function calculateEndDate(startDate, duration) {
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + duration - 1);
-    return endDate;
-}
-
-// remove options buttons
-function removeOptionsContainer(){
-    const optionsContainer = document.getElementById('choices-li');
-    if (optionsContainer) {
-        optionsContainer.innerHTML = ''; // Removes the element from the DOM
+// for the 150 and 180 ddays logic
+function datePickerContainer(containerDiv, optionID, data_storage, topContentDiv) {
+    // get duration of leave and minimum dad leave
+    let duration = 0;
+    let dadMin = 0;
+    if (optionID === 'option-3') {
+        duration = 150;
+        dadMin = 30;            
+    }
+    else if (optionID === 'option-4') {
+        duration = 180;
+        dadMin = 30;
+    } else if (optionID === 'option-5') {
+        duration = 180;
+        dadMin = 60;
     }
 
+    // restart the current div or replace with empty
+    console.log(data_storage)
+    topContentDiv.innerHTML = `
+        <h2>É preciso escolher como vai acontecer o resto da licença</h2>
+        <p>O bebé nasceu ou vai nascer em ${formatDate(data_storage.babyBirthDate)}</p>
+        <p>A duração escolhida foi de <b>${duration} dias</b>, da qual o pai tem de tirar um mínimo de <b>${dadMin} dias</b> para além do que foi tirado nas primeiras 6 semanas. Estes períodos têm de ser no mínimo de 15 dias.</p>
+    `
+
+    // create array with the dates that have already been picked
+    const alreadyPickedDatesArr = alreadyPickedDates(data_storage.secondStep)
+
+    containerDiv.innerHTML = `<p>Primeiras 6 semanas:</p>`
+    
+    // populate the existing days of license
+    for (let i = 0; i < alreadyPickedDatesArr.length; i++) {
+        const element = alreadyPickedDatesArr[i]
+        containerDiv.appendChild(addNewLineExisting(element));
+      }
+
+    containerDiv.innerHTML += `<p>O restante:</p>`
+
+    selectionLogic(data_storage, duration, dadMin, containerDiv)
+
+    return containerDiv
+}
+
+// add a new line for the license already picked - will be used multiple times
+function addNewLineExisting(arrayElement) {
+    // clean dates
+    let startDate = new Date(arrayElement[1])
+    let endDate = new Date(arrayElement[2])
+    startDate = formatDate(startDate)
+    endDate = formatDate(endDate)
+
+    // create span
+    const lineDiv = document.createElement('span');
+    lineDiv.classList.add('leave-period-line');
+
+    // mom or dad?
+    const constName = arrayElement[0] === 'mom' ? 'mãe' : 'pai';
+    lineDiv.textContent = `A ${constName} vai ficar de licença de ${startDate} a ${endDate}.`
+
+    return lineDiv
+}
+
+// Main function to handle the selection logic.
+function selectionLogic(data_storage, duration, dadMin, containerDiv) {
+    // Run data cleanup and validation to get the processed data.
+    let data = dataCleanupValidation(data_storage, duration, dadMin);
+
+    // Create the container div for the leave period line.
+    const lineDiv = document.createElement('div');
+    lineDiv.classList.add('leave-period-line');
+
+    // HELPER INFORMATION
+    const infoDiv = document.getElementById('bottom-content');
+    infoDiv.appendChild(data.htmlDisplay); 
+
+    // Create the new line content using the addNewLine function (if you need more complex lines).
+    addNewLine(data, infoDiv, containerDiv);
+
+    // lineDiv.appendChild(newLine);
+    
+    // Return the completed `lineDiv` containing both the static text and dynamic line.
+    containerDiv.appendChild(infoDiv);
+}
+
+// function to create and return the leave period line.
+function addNewLine(data, infoDiv, containerDiv) {
+    // get necessary values
+    const startDate = data.nextDate
+    const maxEndDate = data.maxDate
+    const daysLeftToPick = data.daysBetweenMaxDateLatestDate
+    const duration = data.duration
+    const dadMin = data.dadMin
+    const durationWithoutInitial = data.durationWithoutInitial
+
+    // create lineDiv
+    const lineDiv = document.createElement('div')
+
+    // initialize newLine div
+    const newLine = document.createElement('div');
+    newLine.classList.add('leave-period-line');
+
+    // Dropdown for Mom/Dad
+    const personSelect = document.createElement('select');
+    personSelect.innerHTML = `
+        <option value="mom">A mãe</option>
+        <option value="dad">O pai</option>
+    `;
+
+    // Text between dropdowns
+    const midText = document.createElement('span');
+    midText.textContent = 'vai ficar de licença durante';
+
+    // construct the options
+    let optionsArr = []
+    // if there are less than 30 days to pick, then there's only the option of picking the full amount of days left, because the person going after can't pick less than 15
+    if (daysLeftToPick < 30) {
+        optionsArr = ['', daysLeftToPick];
+    } 
+    // if this is the first time picking the leave, give the last option of the mom taking the first period all at once and the dad taking the second period all at once
+    else if (daysLeftToPick === durationWithoutInitial) {
+        optionsArr = ['', 15, 30, 60, 90, duration - dadMin - 42];
+    } 
+    else {
+        optionsArr = ['', 15, 30, 60, 90, 120];
+    }
+ 
+    // Dropdown for duration
+    const durationSelect = document.createElement('select');
+
+    // Populate duration dropdown
+    optionsArr.forEach((option) => {
+        const optionElement = document.createElement('option'); // create element
+        optionElement.value = option; // set it's value to the current option
+        optionElement.textContent = `${option} dias`; // display text
+        durationSelect.appendChild(optionElement); // append to element
+    });
+
+    // Display calculated dates
+    const datesDisplay = document.createElement('span');
+
+    // Update dates dynamically
+    durationSelect.addEventListener('change', () => {
+        const selectedDuration = parseInt(durationSelect.value, 10);
+        updateDatesDisplay(startDate, selectedDuration, datesDisplay);
+        const end = calculateEndDate(startDate, selectedDuration);
+        // update the data on leave for mom or dad
+        personSelect.value === 'mom' ? data.momLeaveNew.push([startDate, end]) : data.dadLeaveNew.push([startDate, end]);
+
+        // update data
+        data = dataCleanupValidation(undefined, undefined, undefined, data);
+
+        // update the info helper text
+        infoDiv.innerHTML = ``;
+        infoDiv.appendChild(data.htmlDisplay);
+        // disable the dropdowns for the current display
+        durationSelect.disabled = true;
+        personSelect.disabled = true;
+
+        // if dad min is not achieved and last date is not reached -> create new line with the updated information
+        if (data.dadMinAchieved === false && data.maxDateAchieved === false) {
+            addNewLine(data, infoDiv, lineDiv)
+        }
+        // if last date is achieved but dad doesn't have his min -> error, will have to restart
+        else if (data.dadMinAchieved === false && data.maxDateAchieved === true) {
+
+        }
+        // if both conditions are true -> generate calendar and move on
+        else if (data.dadMinAchieved === true && data.maxDateAchieved === true) {
+            
+        } 
+    });
+
+    // Append elements to the line
+    newLine.appendChild(personSelect);
+    newLine.appendChild(midText);
+    newLine.appendChild(durationSelect);
+    newLine.appendChild(datesDisplay);
+
+    // Return the newly created line and updated data (if needed).
+    lineDiv.appendChild(newLine);
+    containerDiv.appendChild(lineDiv);
+}
+
+
+function dataCleanupValidation(data_storage = null, duration = null, dadMin = null, dataCleaning = {}) {
+    console.log("Initial dataCleaning:", dataCleaning);
+
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000; // Milliseconds in one day
+
+    // Initialize dataCleaning if it is empty and other required parameters are provided
+    if (Object.keys(dataCleaning).length === 0 && data_storage && duration && dadMin) {
+        const babyBirthDate = new Date(data_storage.babyBirthDate);
+        const maxDate = calculateEndDate(babyBirthDate, duration)
+
+        // Populate dataCleaning object
+        dataCleaning = {
+            babyBirthDate,
+            duration,
+            durationWithoutInitial: duration - 42,
+            maxDate,
+            momLeave: data_storage.secondStep.momLeave || [],
+            dadLeave: data_storage.secondStep.dadLeave || [],
+            momLeaveNew: data_storage.thirdStep.momLeave || [],
+            dadLeaveNew: data_storage.thirdStep.dadLeave || [],
+            dadMin,
+        };
+    }
+
+    // Always calculate these fields
+    const dadLeaveNewQt = getTotalLeaveDays(dataCleaning.dadLeaveNew); // Total dad leave in new section
+    const latestDate = getLatestLeaveDate(dataCleaning.momLeave,dataCleaning.dadLeave,dataCleaning.momLeaveNew,dataCleaning.dadLeaveNew); // Latest leave date
+
+    // Update calculated fields
+    dataCleaning = {
+        ...dataCleaning,
+        dadLeaveNewQt,
+        dadDaysRemainingForMin: Math.max(dataCleaning.dadMin - dadLeaveNewQt, 0),
+        latestDate,
+        nextDate: calculateEndDate(dataCleaning.latestDate, 1),
+        daysBetweenMaxDateLatestDate: getDaysBetweenDates(latestDate, dataCleaning.maxDate),
+
+        // two conditions to secure
+        dadMinAchieved: dataCleaning.dadLeaveNewQt >= dataCleaning.dadMin,
+        maxDateAchieved: dataCleaning.daysBetweenMaxDateLatestDate <= 1,
+    };
+
+    // Generate helper text
+    dataCleaning.htmlDisplay = createHelperText(dataCleaning);
+
+    console.log("Updated dataCleaning:", dataCleaning);
+
+    return dataCleaning;
+}
+
+// Helper to create helper text
+function createHelperText(dataCleaning) {
+    const textNode = document.createElement("div");
+    textNode.innerHTML = `
+        <p>Baby was born on ${formatDate(dataCleaning.babyBirthDate)} and the max date that can be picked is ${formatDate(dataCleaning.maxDate)}, which should be ${dataCleaning.duration} days after the birthday.</p>
+        <p>Latest day of the leave is ${formatDate(dataCleaning.latestDate)} and they still have to decide on ${dataCleaning.daysBetweenMaxDateLatestDate} days of leave.</p>
+        <p>Dad already took ${dataCleaning.dadLeaveNewQt} days, still has to take ${dataCleaning.dadDaysRemainingForMin} days.</p>
+        <p>Dad condition is met? ${dataCleaning.dadMinAchieved}. Max date achieved? ${dataCleaning.maxDateAchieved}.</p>
+    `;
+    return textNode;
 }

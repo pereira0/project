@@ -19,10 +19,16 @@ const data_storage = {
     }
 };
 
+// DATE HANDLING FUNCTIONS
 // Utility function to format a date as "DD/MM/YYYY"
 function formatDate(date) {
+    // Ensure the input is a valid Date
+    if (!(date instanceof Date) || isNaN(date)) {
+        date = new Date(date);
+    }
+    // Format the date as 'dd/mm/yy'
     return date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit', year: '2-digit' });
-};
+}
 
 function getDaysBetweenDates(startDate, endDate) {
     const start = new Date(startDate);
@@ -31,6 +37,16 @@ function getDaysBetweenDates(startDate, endDate) {
     return Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
 };
 
+// Calculate end date based on duration
+function calculateEndDate(startDate, duration) {
+    const endDate = new Date(startDate);
+    endDate.setDate(endDate.getDate() + duration - 1);
+    formatDate(endDate);
+    return endDate;
+}
+
+
+// GENERATE CALENDAR DIV
 // Function to generate and display the calendar
 function generateCalendar(babyBirthDateIn, data_storage_step) {
     // get variables
@@ -135,31 +151,6 @@ function generateCalendar(babyBirthDateIn, data_storage_step) {
     return calendarDiv
 };
 
-// Function to find the latest date from both momLeave and dadLeave
-function findLatestDate(momsLeave, dadsLeave) {
-    // Initialize a variable to hold the latest date
-    let latestDate = new Date(0);  // Start with the earliest possible date (Unix epoch)
-
-    // Loop through mom's leave periods and check the end date
-    momsLeave.forEach(leavePeriod => {
-        const endDate = new Date(leavePeriod[1]);
-        if (endDate > latestDate) {
-            latestDate = endDate;
-        }
-    });
-
-    // Loop through dad's leave periods and check the end date
-    dadsLeave.forEach(leavePeriod => {
-        const endDate = new Date(leavePeriod[1]);
-        if (endDate > latestDate) {
-            latestDate = endDate;
-        }
-    });
-
-    // Return the latest date found
-    return latestDate;
-};
-
 // Function to add the legend under the calendar
 function addLegend(calendarDiv) {
     const legendDiv = document.createElement('div');
@@ -208,14 +199,33 @@ function addLegend(calendarDiv) {
     calendarDiv.appendChild(legendDiv);
 };
 
-// Calculate end date based on duration
-function calculateEndDate(startDate, duration) {
-    const endDate = new Date(startDate);
-    endDate.setDate(endDate.getDate() + duration - 1);
-    formatDate(endDate);
-    return endDate;
-}
+// Function to find the latest date from both momLeave and dadLeave
+function findLatestDate(momsLeave, dadsLeave) {
+    // Initialize a variable to hold the latest date
+    let latestDate = new Date(0);  // Start with the earliest possible date (Unix epoch)
 
+    // Loop through mom's leave periods and check the end date
+    momsLeave.forEach(leavePeriod => {
+        const endDate = new Date(leavePeriod[1]);
+        if (endDate > latestDate) {
+            latestDate = endDate;
+        }
+    });
+
+    // Loop through dad's leave periods and check the end date
+    dadsLeave.forEach(leavePeriod => {
+        const endDate = new Date(leavePeriod[1]);
+        if (endDate > latestDate) {
+            latestDate = endDate;
+        }
+    });
+
+    // Return the latest date found
+    return latestDate;
+};
+
+
+// OPTIONS FOR INITIAL LEAVE
 // options for initial leave
 const options = [
     { id: 'option-1', title: 'Opção 1', total: '120 dias', description: 'tirados inteiramente pela mãe.', price: '100% RR' },

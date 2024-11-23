@@ -1,7 +1,6 @@
 import { generateCalendar } from '../components/reusable.js'
 import { thirdStep } from './third_step.js';
 import { setupForm } from './first_step.js';
-import { thirdStepSecond } from './third_step_v2.js';
 
 // Function to set up the form after selecting the baby's birth date
 export function secondStep(data_storage) {
@@ -23,10 +22,7 @@ export function secondStep(data_storage) {
     // Add event listener for the "Generate Calendar" button
     document.getElementById('next-step-second').addEventListener('click', () => { 
         // passar para o proximo passo com a informação das licenças escolhidas e da data de nascimento
-        // thirdStep(data_storage);
-
-        // TEST THIRD STEP
-        thirdStepSecond(data_storage);
+        thirdStep(data_storage);
     });
 
     // return button
