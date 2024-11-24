@@ -1,0 +1,10 @@
+/* Global resets and base styling (e.g., body, h1-h6, p) */
+
+:root {
+    --color-primary: #FFB38E;
+    --color-secondary: #FFCF9D;
+    --color-accent: #FFB26F;
+    --color-dark: #DE8F5F;
+    --font-title: 'Playfair Display', serif;
+    --font-body: 'Signika Negative', sans-serif;
+}

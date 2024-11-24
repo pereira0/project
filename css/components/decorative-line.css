@@ -1,0 +1,23 @@
+/* Line-with-text decorative element */
+
+.decorative-line-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding-top: 30px;
+}
+
+.decorative-line-left,
+.decorative-line-right {
+    flex-grow: 1;
+    height: 1px;
+    background-color: #ccc;
+}
+
+.decorative-line-text {
+    margin: 0 10px;
+    font-size: 16px;
+    color: #333;
+    white-space: nowrap;
+}

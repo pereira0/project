@@ -1,0 +1,15 @@
+/* Utility classes (e.g., flex-center, hidden) */
+
+.hidden {
+    display: none;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.text-center {
+    text-align: center;
+}

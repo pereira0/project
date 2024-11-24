@@ -1,0 +1,21 @@
+/* COMPLETE STYLLINE */
+/* main.css */
+
+/* Base styles - Global settings and resets */
+@import url('base/variables.css');
+@import url('base/global.css');
+@import url('base/utilities.css');
+
+/* Component-specific styles */
+@import url('components/buttons.css');
+@import url('components/calendar.css');
+@import url('components/dashboard.css');
+@import url('components/help-box.css');
+@import url('components/leave-period.css');
+@import url('components/return-button.css');
+@import url('components/decorative-line.css');
+@import url('components/input-date.css');
+
+/* Layout styles - App-wide layout settings */
+@import url('layout/app.css');
+@import url('pages/second-step.css');

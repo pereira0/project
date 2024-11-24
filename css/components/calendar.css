@@ -1,0 +1,78 @@
+/* Calendar component styles (e.g., month, days grid) */
+
+#calendar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 5px;
+    justify-content: center;
+}
+
+.month {
+    width: auto;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.month h3 {
+    font-family: var(--font-title);
+    font-size: 1.1rem;
+    color: var(--color-dark);
+    text-align: center;
+    padding-bottom: 10px;
+    margin: 0px;
+}
+
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: 5px;
+    text-align: center;
+}
+
+.days-grid div {
+    padding: 5px;
+    background-color: #f9f9f9;
+    border-radius: 2px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.days-grid div.today {
+    background-color: #FF6F61;
+    color: #fff;
+}
+
+/* Styling for empty cells */
+.days-grid .empty-day {
+    background-color: rgba(0,0,0,0);
+    border: 1px solid rgba(0,0,0,0);
+}
+
+/* Additional classes for mom/dad/joint leave */
+.days-grid .mom-leave {
+    background-color: #f3d13c;
+    color: #1d1909;
+}
+.days-grid .dad-leave {
+    background-color: #02a890;
+    color: #ccfff7;
+}
+.days-grid .joint-leave {
+    background-color: #fb7e3c;
+    color: #fff9f6;
+}
+
+/* Highlight the birthdate */
+.days-grid .birthdate {
+    background-color: #5e6472;
+    color: #ffffff;
+}
+
+.legend {
+    width: 100%;
+    text-align: center;
+}
+

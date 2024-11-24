@@ -1,0 +1,28 @@
+/* Global CSS variables (colors, fonts, etc.) */
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-body);
+    background-color: #FFF7F3;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-title);
+    color: var(--color-dark);
+}
+
+p {
+    font-family: var(--font-body);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 1rem;
+}

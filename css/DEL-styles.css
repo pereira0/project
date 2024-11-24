@@ -437,3 +437,27 @@ input[type="date"] {
 }
 
 
+/* LINE ON TEXT */
+.decorative-line-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding-top: 30px;
+}
+
+.decorative-line-left,
+.decorative-line-right {
+    flex-grow: 1;
+    height: 1px;
+    background-color: #ccc; /* Light gray line */
+}
+
+.decorative-line-text {
+    margin: 0 10px; /* Spacing between lines and text */
+    font-size: 16px;
+    color: #333; /* Dark text color */
+    white-space: nowrap; /* Prevent text from wrapping */
+}
+
+

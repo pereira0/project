@@ -142,6 +142,31 @@ function createDashboard(data) {
     // }
 }
 
+function createLineWithText(container, text) {
+    // Create the main div
+    const decorativeLine = document.createElement('div');
+    decorativeLine.classList.add('decorative-line-container');
 
+    // Create the left line
+    const leftLine = document.createElement('div');
+    leftLine.classList.add('decorative-line-left');
 
-export { updateDatesDisplay, getLatestLeaveDate, getTotalLeaveDays, alreadyPickedDates, createDashboard }
+    // Create the text span
+    const textSpan = document.createElement('span');
+    textSpan.classList.add('decorative-line-text');
+    textSpan.textContent = text;
+
+    // Create the right line
+    const rightLine = document.createElement('div');
+    rightLine.classList.add('decorative-line-right');
+
+    // Append the lines and text to the main div
+    decorativeLine.appendChild(leftLine);
+    decorativeLine.appendChild(textSpan);
+    decorativeLine.appendChild(rightLine);
+
+    // Append the main div to the specified container
+    container.appendChild(decorativeLine);
+}
+
+export { updateDatesDisplay, getLatestLeaveDate, getTotalLeaveDays, alreadyPickedDates, createDashboard, createLineWithText }

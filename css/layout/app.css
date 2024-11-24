@@ -1,0 +1,8 @@
+/* App-wide layout styling (container, alignment) */
+
+#app {
+    width: 100%;
+    max-width: 1200px;
+    padding: 1rem;
+    text-align: center;
+}

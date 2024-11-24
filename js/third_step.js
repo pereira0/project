@@ -1,7 +1,7 @@
 import { secondStep } from './second_step.js';
 import { helpThirdStep } from '../components/help_text.js';
 import { formatDate, getDaysBetweenDates, options, calculateEndDate, generateCalendar } from '../components/reusable.js'
-import { updateDatesDisplay, getLatestLeaveDate, getTotalLeaveDays, alreadyPickedDates, createDashboard } from '../components/helper_fun_ts.js';
+import { updateDatesDisplay, getLatestLeaveDate, getTotalLeaveDays, alreadyPickedDates, createDashboard, createLineWithText } from '../components/helper_fun_ts.js';
 
 // Function to set up the form after selecting the baby's birth date
 export function thirdStep(data_storage) {
@@ -137,7 +137,11 @@ function datePickerContainer(containerDiv, optionID, data_storage, topContentDiv
     // create array with the dates that have already been picked
     const alreadyPickedDatesArr = alreadyPickedDates(data_storage.secondStep)
 
-    containerDiv.innerHTML = `<p>Primeiras 6 semanas:</p>`
+    createLineWithText(containerDiv, 'PRIMEIRAS 6 SEMANAS')
+
+    
+
+    // containerDiv.innerHTML = `<p>Primeiras 6 semanas:</p>`
 
     // populate the existing days of license
     for (let i = 0; i < alreadyPickedDatesArr.length; i++) {
@@ -145,7 +149,7 @@ function datePickerContainer(containerDiv, optionID, data_storage, topContentDiv
         containerDiv.appendChild(addNewLineExisting(element));
     }
 
-    containerDiv.innerHTML += `<p>O restante:</p>`
+    createLineWithText(containerDiv, 'O RESTO')
 
     selectionLogic(data_storage, duration, dadMin, containerDiv)
 
