@@ -4,9 +4,10 @@ button {
     background-color: var(--color-accent);
     color: white;
     border: none;
-    padding: 0.75rem 1.5rem;
+    padding: 1rem;
+    margin: 0.1rem;
     font-size: 1rem;
-    border-radius: 5px;
+    border-radius: 200px;
     cursor: pointer;
     font-family: var(--font-body);
 }
@@ -33,3 +34,44 @@ button:disabled {
     color: #333;
     cursor: pointer;
 }
+
+/* wrapper for buttons */
+.button-wrapper {
+    padding: 1rem;
+}
+
+/* ADD BUTTON FOR THIRD STEP */
+.circle-button {
+    width: 30px;             /* Set width */
+    height: 30px;            /* Equal height for a circle */
+    border-radius: 50%;      /* Makes it a circle */
+    border: 2px solid white;            /* Optional: Remove border */
+    background-color: transparent; /* Button color */
+    color: white;            /* Text/icon color */
+    font-size: 24px;         /* Font size for the icon/text */
+    display: flex;           /* Center content */
+    align-items: center;     /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    cursor: pointer;         /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth color change */
+}
+
+.circle-button:disabled {
+    color: rgba(255, 255, 255, 0.384); /* Darker shade on hover */
+    border: 2px solid rgba(255, 255, 255, 0.384);
+    background-color: transparent;
+}
+
+.circle-button:hover:enabled {
+    background-color: white; /* Darker shade on hover */
+    color: var(--color-accent);
+}
+
+.circle-button .hidden {
+    display: none;
+}
+
+.circle-button[hidden] {
+    display: none !important; /* Ensure the button is completely removed */
+}
+

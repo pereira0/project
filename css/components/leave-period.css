@@ -9,6 +9,7 @@
     max-width: 650px;
     margin: 0 auto;
     padding: 5px;
+    box-shadow: none;
 }
 
 .leave-period-line {
@@ -24,6 +25,7 @@
     width: 100%;
     max-width: 800px;
     box-sizing: border-box;
+    box-shadow: none;
 }
 
 .leave-period-line select {
@@ -33,14 +35,16 @@
     border-bottom: 1px solid white;
     background-color: transparent;
     font-size: 14px;
+    box-shadow: none;
 }
 
 .leave-period-line span {
     font-size: 14px;
     color: #333;
+    box-shadow: none;
 }
 
-.add-line-button {
+/* .add-line-button {
     padding: 5px 10px;
     background-color: #28a745;
     color: #fff;
@@ -57,7 +61,7 @@
     color: white;
     border: none;
     /* font-size: 14px; */
-    cursor: pointer;
+    /* cursor: pointer;
     margin-right: 5px;
     margin-top: 10px;
 }
@@ -65,4 +69,4 @@
 .add-line-button:hover,
 .validate-button:hover {
     background-color: #45a049;
-}
+} */

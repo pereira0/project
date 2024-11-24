@@ -1,0 +1,15 @@
+/* third-step.css */
+.third-step-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* max-width: 800px; */
+    margin: 0 auto;
+    padding: 5px;
+}
+
+.third-step-container > div {
+    box-shadow: none;
+    border: none;
+}

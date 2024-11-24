@@ -52,11 +52,9 @@ function calculateEndDate(startDate, duration) {
     return endDate;
 }
 
-
 // GENERATE CALENDAR DIV
 // Function to generate and display the calendar
 function generateCalendar(babyBirthDateIn, data_storage_step) {
-    console.log(data_storage_step)
     // get variables
     const babyBirthDate = babyBirthDateIn;
     const momsLeave = data_storage_step.momLeave;
@@ -65,13 +63,11 @@ function generateCalendar(babyBirthDateIn, data_storage_step) {
     const calendarDiv = document.createElement('div')
     calendarDiv.id = 'calendar'
 
-    // const calendarDiv = document.getElementById('calendar');
     calendarDiv.innerHTML = ''; // Clear any previous calendar
 
     // Set the start and end dates for the calendar
     const startDate = new Date(babyBirthDate);
     const endDate = findLatestDate(momsLeave, dadsLeave);
-    
     let currentDate = new Date(startDate);
 
     // Loop through each month
@@ -85,6 +81,21 @@ function generateCalendar(babyBirthDateIn, data_storage_step) {
 
         monthDiv.appendChild(monthHeader);
 
+        // Add the weekdays initials row
+        const weekdaysRow = document.createElement('div');
+        weekdaysRow.classList.add('weekdays-row');
+        const weekdayInitials = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']; // Portuguese initials for weekdays
+        
+        // Append weekday initials (fixed Monday to Sunday order)
+        const rotatedWeekdayInitials = [...weekdayInitials.slice(1), weekdayInitials[0]]; // Move 'S' (Sunday) to the end
+        rotatedWeekdayInitials.forEach(initial => {
+            const dayInitial = document.createElement('div');
+            dayInitial.textContent = initial;
+            dayInitial.classList.add('weekday-initial');
+            weekdaysRow.appendChild(dayInitial);
+        });
+        monthDiv.appendChild(weekdaysRow);
+
         // Create a grid for the days
         const daysGrid = document.createElement('div');
         daysGrid.classList.add('days-grid');
@@ -92,8 +103,12 @@ function generateCalendar(babyBirthDateIn, data_storage_step) {
         const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
         const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
+        // Adjust first day to start on Monday (1 instead of 0 for Sunday)
+        let adjustedStartDay = firstDay.getDay();
+        adjustedStartDay = adjustedStartDay === 0 ? 6 : adjustedStartDay - 1;
+
         // Fill in empty spaces for the first row
-        for (let i = 0; i < firstDay.getDay(); i++) {
+        for (let i = 0; i < adjustedStartDay; i++) {
             const emptyDiv = document.createElement('div');
             emptyDiv.classList.add('empty-day');
             daysGrid.appendChild(emptyDiv);
@@ -125,11 +140,9 @@ function generateCalendar(babyBirthDateIn, data_storage_step) {
                     currentDay.getMonth() === new Date(babyBirthDate).getMonth() &&
                     currentDay.getDate() === new Date(babyBirthDate).getDate();
 
- 
             if (isBirthDate) {
                 dayDiv.classList.add('birthdate');
             }
-            
             else if (isMomLeave && isDadLeave) {
                 dayDiv.classList.add('joint-leave');
             }
@@ -156,8 +169,9 @@ function generateCalendar(babyBirthDateIn, data_storage_step) {
     // add legend
     addLegend(calendarDiv);
 
-    return calendarDiv
+    return calendarDiv;
 };
+
 
 // Function to add the legend under the calendar
 function addLegend(calendarDiv) {

@@ -16,7 +16,7 @@ export function thirdStep(data_storage) {
     appDiv.innerHTML = `
         <div id='content-general'>
             <div id='top-content'></div>
-            <div id='content'></div>
+            <div id='content' class='third-step-container'></div>
             <div id='bottom-content'></div>
             <div id='dashboard-container'></div>
         </div>
@@ -25,7 +25,6 @@ export function thirdStep(data_storage) {
     // populate appDiv
     const topContentDiv = document.getElementById('top-content')
     const contentDiv = document.getElementById('content')
-    console.log('first step: ', data_storage)
     choicesCreation(contentDiv, topContentDiv, data_storage);
 
     // get return button
@@ -83,6 +82,7 @@ function choicesCreation(contentDiv, topContentDiv, data_storage) {
 function populateCalendarAndData(containerDiv, optionID, data_storage, topContentDiv) {
     // replace current div
     topContentDiv.innerHTML = `<h2>Selecionado</h2>`
+    containerDiv.innerHTML = ``
 
     // check which button was clicked 
     // logic for options 1 and 2
@@ -186,8 +186,6 @@ function selectionLogic(data_storage, duration, dadMin, containerDiv) {
 
     // // HELPER INFORMATION
     const infoDiv = document.getElementById('bottom-content');
-    // infoDiv.innerHTML = data.htmlDisplay;
-    console.log(data_storage)
 
     // Create the new line content using the addNewLine function (if you need more complex lines).
     addNewLine(data, infoDiv, containerDiv, data_storage);
@@ -202,7 +200,6 @@ function selectionLogic(data_storage, duration, dadMin, containerDiv) {
 
 // function to create and return the leave period line.
 function addNewLine(data, infoDiv, containerDiv, data_storage) {
-    console.log("-3: ", data_storage)
     // DATA START
     // get necessary values
     const startDate = data.firstDayNextLeave
@@ -241,12 +238,13 @@ function addNewLine(data, infoDiv, containerDiv, data_storage) {
     // create add button
     const addButton = document.createElement('button');
     addButton.id = 'adicionar-linha'
+    addButton.className = 'circle-button'
     addButton.textContent = '+'
     addButton.disabled = true;
 
 
     // FUNCTIONALITY
-    // Update dates dynamically
+    // if dates changed, activate add button
     durationSelect.addEventListener('change', () => {
         const selectedDuration = parseInt(durationSelect.value, 10);
         if (selectedDuration > 0) {
@@ -254,8 +252,6 @@ function addNewLine(data, infoDiv, containerDiv, data_storage) {
         };
         updateDatesDisplay(startDate, selectedDuration, datesDisplay);
     });
-
-    console.log("-2: ", data_storage)
 
     // Add line button
     addButton.addEventListener('click', () => {
@@ -268,17 +264,14 @@ function addNewLine(data, infoDiv, containerDiv, data_storage) {
         data.person = selectedPerson;
         data = dataHandling(null, null, null, data);
 
-        // // update the info helper text
-        // infoDiv.innerHTML = data.htmlDisplay;
-
         // disable the dropdowns for the current display
         durationSelect.disabled = true;
         personSelect.disabled = true;
+        addButton.hidden = true;
 
         // if dad min is not achieved and last date is not reached -> create new line with the updated information
         if (data.totalTimeCondition === false) {
-            addNewLine(data, infoDiv, lineDiv, data_storage); 
-            addButton.hidden = true;
+            addNewLine(data, infoDiv, lineDiv, data_storage);  
             // update dashboard container
             dashboardContainer.innerHTML = ``;
             dashboardContainer.appendChild(createDashboard(data));
@@ -297,12 +290,10 @@ function addNewLine(data, infoDiv, containerDiv, data_storage) {
             dashboardContainer.innerHTML = ``;
             dashboardContainer.appendChild(createDashboard(data));
             // continue button
-            console.log("-1 ", data_storage)
             const continueButton = createCalendarButton(data, data_storage)
             dashboardContainer.appendChild(continueButton)
-
-
         }
+
         else if (data.daysLeft < 0) {
             alert('went overboard again')
             addButton.hidden = true; 
@@ -310,7 +301,6 @@ function addNewLine(data, infoDiv, containerDiv, data_storage) {
 
         }
     });
-
 
     // VISUALS
     // Append elements to the line
@@ -510,20 +500,32 @@ function createCalendarButton(data, data_storage) {
     const createCalendarButton = document.createElement('button');
     createCalendarButton.id = 'criar-calendario'
     createCalendarButton.textContent = 'Atualizar calendário'
-
-    console.log("0 ", data)
+    console.log("data created: ", data)
     
-    // get vars from dictionary
-    const momLastLeave = data.momLastLeave
-    const dadLastLeave = data.dadLastLeave
-    const momNewLeave = data.momNewLeave
-    const dadNewLeave = data.dadNewLeave
-    const momTotalLeave = momLastLeave.push(momNewLeave)
-    const dadTotalLeave = dadLastLeave.push(dadNewLeave)
+    // update mom leave
+    const momTotalLeave = []
+    momTotalLeave.push(data_storage.secondStep.momLeave) 
+    momTotalLeave.push(data.momNewLeave)
+
+    // update dad leave
+    const dadTotalLeave = []
+    dadTotalLeave.push(data_storage.secondStep.dadLeave) 
+    dadTotalLeave.push(data.dadNewLeave)
+    
+    // const momLastLeave = data.momLastLeave
+    // const dadLastLeave = data.dadLastLeave
+    // const momNewLeave = data.momNewLeave
+    // const dadNewLeave = data.dadNewLeave
+    // momLastLeave.push(momNewLeave)
+    // dadLastLeave.push(dadNewLeave)
+    
+
+    console.log("mom leave array: ",momTotalLeave, "dad leave array:", dadTotalLeave)
+
     // atualizar dados gerais
     data_storage.thirdStep.momLeave = momTotalLeave
     data_storage.thirdStep.dadLeave = dadTotalLeave
-    console.log(data_storage)
+    console.log("before generating calendar: ", data_storage)
     
     const newCalendar = generateCalendar(data_storage.babyBirthDateIn, data_storage.thirdStep)
 
